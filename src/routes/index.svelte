@@ -1,11 +1,11 @@
 <script context="module">
-	export const prerender = true;
+  export const prerender = true;
 </script>
 
 <script>
   import { LinkedChart, LinkedLabel, LinkedValue } from "svelte-tiny-linked-charts";
   import axios from "axios";
-	import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
 
   let data = {
     "2005-01-01": 25,
@@ -24,14 +24,14 @@
 
   let pairsData = [];
   let tokenData = [];
-
+  const API_PREFIX = import.meta.env.VITE_API_PREFIX; //change this to AXIOS config later 
 
   onMount(async () => {
-    console.log('halo');
-    let response = await axios.get('/v2-pairs.json');
+    console.log('API', API_PREFIX);
+    let response = await axios.get(API_PREFIX+'/v2-pairs');
     console.log('got pairs', response.data.length);
     pairsData = response.data.slice(0, 10);
-    response = await axios.get('/tokens.json');
+    response = await axios.get(API_PREFIX+'/tokens');
     console.log('got tokens', response.data.length);
     tokenData = response.data.slice(0, 10);
   });
@@ -39,7 +39,7 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
+  <title>Home</title>
 </svelte:head>
 
 <!-- This example requires Tailwind CSS v2.0+ -->
@@ -182,16 +182,18 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
+              <!--
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 1Y/Liquity
               </th>
+              -->
             </tr>
           </thead>
           <tbody>
-            {#each pairsData as pair}
-            <tr class={pair.index%2 == 0 ? "bg-gray-50" : "bg-white"}>
+            {#each pairsData as pair, index}
+            <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.index}
+                {index+1}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {pair.name}
@@ -208,9 +210,11 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {pair.fees_24h}
               </td>
+              <!--
               <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
                 {pair["1y_fees_liquidity"]}
               </td>
+              -->
             </tr>
             {/each}
           </tbody>
@@ -253,10 +257,10 @@
             </tr>
           </thead>
           <tbody>
-            {#each tokenData as token}
-            <tr class={token.index%2 == 0 ? "bg-gray-50" : "bg-white"}>
+            {#each tokenData as token, index}
+            <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.index}
+                {index}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {token.name}

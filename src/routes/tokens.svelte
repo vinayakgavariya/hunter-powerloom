@@ -1,22 +1,24 @@
 <script context="module">
-	export const prerender = true;
+  export const prerender = true;
 </script>
 
 <script>
   import axios from "axios";
-	import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
 
-	let data = [];
+  let data = [];
+  const API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
-	onMount(async () => {
-    const response = await axios.get('/tokens.json');
+  onMount(async () => {
+    console.log('API', API_PREFIX);
+    let response = await axios.get(API_PREFIX+'/tokens');
     data = response.data;
     console.log('got tokens', response.data);
-	});
+  });
 </script>
 
 <svelte:head>
-	<title>Tokens</title>
+  <title>Tokens</title>
 </svelte:head>
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="flex flex-col">
@@ -47,10 +49,10 @@
             </tr>
           </thead>
           <tbody>
-            {#each data as token}
-            <tr class={token.index%2 == 0 ? "bg-gray-50" : "bg-white"}>
+            {#each data as token, index}
+            <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.index}
+                {index+1}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {token.name}

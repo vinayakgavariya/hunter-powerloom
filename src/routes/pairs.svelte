@@ -1,22 +1,24 @@
 <script context="module">
-	export const prerender = true;
+  export const prerender = true;
 </script>
 
 <script>
   import axios from "axios";
-	import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
 
-	let data = [];
+  let data = [];
+  const API_PREFIX = import.meta.env.VITE_API_PREFIX;
 
-	onMount(async () => {
-    const response = await axios.get('/v2-pairs.json');
+  onMount(async () => {
+    console.log('API', API_PREFIX);
+    let response = await axios.get(API_PREFIX+'/v2-pairs');
     data = response.data;
     console.log('got pairs', response.data);
-	});
+  });
 </script>
 
 <svelte:head>
-	<title>Pools</title>
+  <title>Pools</title>
 </svelte:head>
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="flex flex-col">
@@ -50,10 +52,10 @@
             </tr>
           </thead>
           <tbody>
-            {#each data as pool}
-            <tr class={pool.index%2 == 0 ? "bg-gray-50" : "bg-white"}>
+            {#each data as pool, index}
+            <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.index}
+                {index+1}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {pool.name}
