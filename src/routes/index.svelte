@@ -47,7 +47,7 @@
     console.log('API', API_PREFIX);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/stats');
+      response = await axios.get(API_PREFIX+'/daily-stats');
       console.log('got stats', response.data);
       statsData = response.data;
     }
