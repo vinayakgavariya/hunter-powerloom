@@ -22,18 +22,54 @@
     "2005-01-05": 21
   }
 
+  let statsData = {
+    "volume24": {
+        "currentValue": "USD$1,280,000,000",
+        "previousValue": "USD$980,000,000",
+        "change": "30.61%"
+    },
+    "tvl": {
+        "currentValue": "USD$4,670,000,000",
+        "previousValue": "USD$5,370,000,000",
+        "change": "-13.04%"
+    },
+    "fees24": {
+        "currentValue": "USD$4,700,000",
+        "previousValue": "USD$2,700,000",
+        "change": "74.07%"
+    }
+  };
   let pairsData = [];
   let tokenData = [];
   const API_PREFIX = import.meta.env.VITE_API_PREFIX; //change this to AXIOS config later 
 
   onMount(async () => {
     console.log('API', API_PREFIX);
-    let response = await axios.get(API_PREFIX+'/v2-pairs');
-    console.log('got pairs', response.data.length);
-    pairsData = response.data.slice(0, 10);
-    response = await axios.get(API_PREFIX+'/tokens');
-    console.log('got tokens', response.data.length);
-    tokenData = response.data.slice(0, 10);
+    let response;
+    try {
+      response = await axios.get(API_PREFIX+'/stats');
+      console.log('got stats', response.data);
+      statsData = response.data;
+    }
+    catch (e){
+      console.error('stats', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+'/v2-pairs');
+      console.log('got pairs', response.data.length);
+      pairsData = response.data.slice(0, 10);
+    }
+    catch (e){
+      console.error('pairs', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+'/tokens');
+      console.log('got tokens', response.data.length);
+      tokenData = response.data.slice(0, 10);
+    }
+    catch (e){
+      console.error('tokens', e);
+    }
   });
 
 </script>
@@ -43,12 +79,13 @@
 </svelte:head>
 
 <!-- This example requires Tailwind CSS v2.0+ -->
+{#if 0}
 <div>
-<!--
+  <!--
   <h3 class="text-lg leading-6 font-medium text-gray-900">
     Last 30 days
   </h3>
--->
+  -->
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
     <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
       <dt>
@@ -73,6 +110,7 @@
     </div>
   </dl>
 </div>
+{/if}
 <div>
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
@@ -84,9 +122,10 @@
         <p class="ml-16 text-sm font-medium text-gray-500 truncate">Volume 24H</p>
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
-        <p class="text-2xl font-semibold text-gray-900">
-          $2.31b
+        <p class="text-xl font-semibold text-gray-900">
+          {statsData.volume24.currentValue ? statsData.volume24.currentValue : "$2.31b"}
         </p>
+        {#if statsData.volume24.change == undefined || statsData.volume24.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -95,33 +134,20 @@
           <span class="sr-only">
             Increased by
           </span>
-          65.62%
+          {statsData.volume24.change == undefined ? "65.62%" : statsData.volume24.change}
         </p>
-      </dd>
-    </div>
-
-    <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-      <dt>
-        <div class="absolute bg-indigo-500 rounded-md p-3">
-          <!-- Heroicon name: outline/mail-open -->
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-        </div>
-        <p class="ml-16 text-sm font-medium text-gray-500 truncate">Fees 24H</p>
-      </dt>
-      <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
-        <p class="text-2xl font-semibold text-gray-900">
-          $4.71m
-        </p>
-        <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
-          <!-- Heroicon name: solid/arrow-sm-up -->
-          <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+        {:else}
+        <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
+          <!-- Heroicon name: solid/arrow-sm-down -->
+          <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
           </svg>
           <span class="sr-only">
-            Increased by
+            Decreased by
           </span>
-          105.80%
+          {statsData.volume24.change.substr(1)}
         </p>
+        {/if}
       </dd>
     </div>
 
@@ -134,9 +160,21 @@
         <p class="ml-16 text-sm font-medium text-gray-500 truncate">TVL</p>
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
-        <p class="text-2xl font-semibold text-gray-900">
-          $3.78b
+        <p class="text-xl font-semibold text-gray-900">
+          {statsData.tvl.currentValue ? statsData.tvl.currentValue : "$3.78b"}
         </p>
+        {#if statsData.tvl.change == undefined || statsData.tvl.change.substr(0, 1) != "-"}
+        <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+          <!-- Heroicon name: solid/arrow-sm-up -->
+          <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span class="sr-only">
+            Increased by
+          </span>
+          {statsData.tvl.change == undefined ? "65.62%" : statsData.tvl.change}
+        </p>
+        {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
           <!-- Heroicon name: solid/arrow-sm-down -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -145,10 +183,50 @@
           <span class="sr-only">
             Decreased by
           </span>
-          2.29%
+          {statsData.tvl.change.substr(1)}
         </p>
+        {/if}
       </dd>
     </div>
+
+    <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
+      <dt>
+        <div class="absolute bg-indigo-500 rounded-md p-3">
+          <!-- Heroicon name: outline/mail-open -->
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        </div>
+        <p class="ml-16 text-sm font-medium text-gray-500 truncate">Fees 24H</p>
+      </dt>
+      <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
+        <p class="text-xl font-semibold text-gray-900">
+          {statsData.fees24.currentValue ? statsData.fees24.currentValue : "$$4.71m"}
+        </p>
+        {#if statsData.fees24.change == undefined || statsData.fees24.change.substr(0, 1) != "-"}
+        <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+          <!-- Heroicon name: solid/arrow-sm-up -->
+          <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span class="sr-only">
+            Increased by
+          </span>
+          {statsData.fees24.change == undefined ? "65.62%" : statsData.fees24.change}
+        </p>
+        {:else}
+        <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
+          <!-- Heroicon name: solid/arrow-sm-down -->
+          <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          <span class="sr-only">
+            Decreased by
+          </span>
+          {statsData.fees24.change.substr(1)}
+        </p>
+        {/if}
+      </dd>
+    </div>
+
   </dl>
 </div>
 <div class="py-4 flex justify-between">

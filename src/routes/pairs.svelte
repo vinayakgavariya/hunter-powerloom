@@ -46,9 +46,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
+              <!--
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 1Y/Liquity
               </th>
+              -->
             </tr>
           </thead>
           <tbody>
@@ -72,9 +74,11 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {pool.fees_24h}
               </td>
+              <!--
               <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
                 {pool["1y_fees_liquidity"]}
               </td>
+              -->
             </tr>
             {/each}
           </tbody>

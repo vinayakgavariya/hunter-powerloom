@@ -1,0 +1,17 @@
+{
+    "volume24": {
+        "currentValue": "USD$1,280,000,000",
+        "previousValue": "USD$980,000,000",
+        "change": "30.61%"
+    },
+    "tvl": {
+        "currentValue": "USD$4,670,000,000",
+        "previousValue": "USD$5,370,000,000",
+        "change": "-13.04%"
+    },
+    "fees24": {
+        "currentValue": "USD$4,700,000",
+        "previousValue": "USD$2,700,000",
+        "change": "74.07%"
+    }
+}
