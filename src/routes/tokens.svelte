@@ -7,11 +7,11 @@
   import { onMount } from 'svelte';
 
   let data = [];
-  const API_PREFIX = import.meta.env.VITE_API_PREFIX;
+  const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
-    let response = await axios.get(API_PREFIX+'/tokens');
+    let response = await axios.get(API_PREFIX+'/v2_tokens');
     data = response.data;
     console.log('got tokens', response.data);
   });

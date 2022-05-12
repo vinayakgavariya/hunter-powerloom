@@ -41,7 +41,7 @@
   };
   let pairsData = [];
   let tokenData = [];
-  const API_PREFIX = import.meta.env.VITE_API_PREFIX; //change this to AXIOS config later 
+  const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
 
   onMount(async () => {
     console.log('API', API_PREFIX);
@@ -63,7 +63,7 @@
       console.error('pairs', e);
     }
     try {
-      response = await axios.get(API_PREFIX+'/tokens');
+      response = await axios.get(API_PREFIX+'/v2_tokens');
       console.log('got tokens', response.data.length);
       tokenData = response.data.slice(0, 10);
     }
