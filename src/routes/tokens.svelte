@@ -35,6 +35,9 @@
                 Name
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Symbol
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -44,7 +47,7 @@
                 Volume 24H
               </th>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                TVL
+                Liquidity
               </th>
             </tr>
           </thead>
@@ -59,9 +62,6 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.symbol}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.volume_24h}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.price}
@@ -94,6 +94,12 @@
                   ~{token.price_change_24h}
                 </p>
                 {/if}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {token.volume_24h}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {token.liquidity}
               </td>
             </tr>
             {/each}
