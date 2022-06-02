@@ -11,7 +11,7 @@
 
   onMount(async () => {
     console.log('API', API_PREFIX);
-    let response = await axios.get(API_PREFIX+'/v2_tokens');
+    let response = await axios.get(API_PREFIX+'/v2-tokens');
     data = response.data;
     console.log('got tokens', response.data);
   });

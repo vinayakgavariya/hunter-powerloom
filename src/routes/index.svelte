@@ -47,7 +47,7 @@
     console.log('API', API_PREFIX);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v2_daily_stats');
+      response = await axios.get(API_PREFIX+'/v2-daily-stats');
       console.log('got stats', response.data);
       statsData = response.data;
     }
@@ -63,7 +63,7 @@
       console.error('pairs', e);
     }
     try {
-      response = await axios.get(API_PREFIX+'/v2_tokens');
+      response = await axios.get(API_PREFIX+'/v2-tokens');
       console.log('got tokens', response.data.length);
       tokenData = response.data.slice(0, 10);
     }
