@@ -39,7 +39,7 @@
         "change": "74.07%"
     }
   };
-  let pairsData = [];
+  let pairsData = {data:[]};
   let tokenData = [];
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
 
@@ -55,9 +55,15 @@
       console.error('stats', e);
     }
     try {
-      response = await axios.get(API_PREFIX+'/v2-pairs');
-      console.log('got pairs', response.data.length);
-      pairsData = response.data.slice(0, 10);
+      response = await axios.get(API_PREFIX+'/v1/api/v2-pairs');
+      console.log('got pairs', response.data);
+      pairsData = {
+        block_height: response.data.block_height,
+        block_timestamp: new Date(response.data.block_timestamp*1000),
+        data: response.data.data.slice(0, 10),
+        txHash: response.data.txHash,
+        cid: response.data.cid
+      }
     }
     catch (e){
       console.error('pairs', e);
@@ -233,6 +239,14 @@
   <h3 class="text-lg font-medium text-gray-900">
     Top Pairs
   </h3>
+  {#if pairsData.block_height}Synced to <a href="https://etherscan.io/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a>
+  {/if} {pairsData.block_timestamp}
+  {#if pairsData.cid}
+  <a href="https://ipfs.io/ipfs/{pairsData.cid}"class="text-indigo-800" target="_blank">IPFS</a>
+  {/if}
+  {#if pairsData.txHash}
+  <a href="https://explorer-prost.powerloom.io/tx/{pairsData.txHash}"class="text-indigo-800" target="_blank">Proof</a>
+  {/if}
   <a href="/pairs"class="text-indigo-800">See all</a>
 </div>
 <div class="flex flex-col">
@@ -270,7 +284,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each pairsData as pair, index}
+            {#each pairsData.data as pair, index}
             <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {index+1}
