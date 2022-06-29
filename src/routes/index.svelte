@@ -33,7 +33,11 @@
     try {
       response = await axios.get(API_PREFIX+'/v1/api/v2-daily-stats');
       console.log('got stats', response.data);
-      statsData = response.data.data == undefined ? null : response.data.data;
+      if (response.data.data) {
+        statsData = response.data.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
     }
     catch (e){
       console.error('stats', e);
