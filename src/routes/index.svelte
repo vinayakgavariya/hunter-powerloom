@@ -22,24 +22,7 @@
     "2005-01-04": 17,
     "2005-01-05": 21
   }
-
-  let statsData = {
-    "volume24": {
-        "currentValue": "USD$1,280,000,000",
-        "previousValue": "USD$980,000,000",
-        "change": "30.61%"
-    },
-    "tvl": {
-        "currentValue": "USD$4,670,000,000",
-        "previousValue": "USD$5,370,000,000",
-        "change": "-13.04%"
-    },
-    "fees24": {
-        "currentValue": "USD$4,700,000",
-        "previousValue": "USD$2,700,000",
-        "change": "74.07%"
-    }
-  };
+  let statsData = null;
   let pairsData = {data:[]};
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
@@ -50,7 +33,7 @@
     try {
       response = await axios.get(API_PREFIX+'/v1/api/v2-daily-stats');
       console.log('got stats', response.data);
-      statsData = response.data.data;
+      statsData = response.data.data == undefined ? null : response.data.data;
     }
     catch (e){
       console.error('stats', e);
@@ -124,6 +107,7 @@
   </dl>
 </div>
 {/if}
+{#if statsData }
 <div>
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
@@ -242,6 +226,7 @@
 
   </dl>
 </div>
+{/if}
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="pt-4">
 <div class="bg-white px-4 py-5 shadow overflow-hidden border-b border-gray-200 sm:rounded-lg sm:px-6 ">
