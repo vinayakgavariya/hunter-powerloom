@@ -25,7 +25,7 @@
       }
     }
     catch (e){
-      console.error('stats', e);
+      console.error('pairs', e);
     }
   });
 </script>
