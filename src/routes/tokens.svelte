@@ -7,11 +7,13 @@
   import { onMount } from 'svelte';
   import Time from "svelte-time";
 
-  let tokenData = {data:[]};
+  let tokenData = {data:[], fullData:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static';
+  let name = '';
 
   onMount(async () => {
-    console.log('API', API_PREFIX);
+    name = location.search.substr(8);
+    console.log('search', name);
     let response;
     try {
       response = await axios.get(API_PREFIX+'/v1/api/v2-tokens');
@@ -20,14 +22,31 @@
         block_height: response.data.block_height,
         block_timestamp: new Date(response.data.block_timestamp*1000),
         data: response.data.data,
+        fullData: response.data.data,
         txHash: response.data.txHash,
         cid: response.data.cid
       }
+      searchTokens();
     }
     catch (e){
       console.error('tokens', e);
     }
   });
+
+  function searchTokens(){
+    //if (name)
+    {
+      tokenData.data = tokenData.fullData.filter(token => {
+        return (token.symbol.indexOf(name.toUpperCase()) != -1 || token.name.toUpperCase().indexOf(name.toUpperCase()) != -1);
+      });
+    }
+  }
+
+  $: {
+    console.log('got search', name);
+    searchTokens();
+  }
+  
 </script>
 
 <svelte:head>
@@ -49,6 +68,16 @@
             </p>
           </div>
         </div>
+      </div>
+      <div class="ml-4 mt-4 flex-shrink-0 flex">
+        <form class="space-y-8 divide-y divide-gray-200">
+          <div class="mt-1 relative flex items-center">
+            <input type="text" name="search" id="search"  placeholder="Search for Pairs" bind:value={name} class="px-2 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md">
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <span class="text-gray-500 sm:text-sm" id="price-currency"> 🔎  </span>
+            </div>
+          </div>
+        </form>
       </div>
       <div class="ml-4 mt-4 flex-shrink-0 flex">
         <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{tokenData.cid}">

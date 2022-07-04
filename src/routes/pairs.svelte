@@ -7,11 +7,13 @@
   import { onMount } from 'svelte';
   import Time from "svelte-time";
 
-  let pairsData = {data:[]};
+  let pairsData = {data:[], fullData:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX;
+  let name = '';
 
   onMount(async () => {
-    console.log('API', API_PREFIX);
+    name = location.search.substr(8);
+    console.log('search', name);
     let response;
     try {
       response = await axios.get(API_PREFIX+'/v1/api/v2-pairs');
@@ -20,14 +22,31 @@
         block_height: response.data.block_height,
         block_timestamp: new Date(response.data.block_timestamp*1000),
         data: response.data.data,
+        fullData: response.data.data,
         txHash: response.data.txHash,
         cid: response.data.cid
-      }
+      };
+      searchPairs();
     }
     catch (e){
       console.error('pairs', e);
     }
   });
+
+  function searchPairs(){
+    //if (name)
+    {
+      pairsData.data = pairsData.fullData.filter(pair => {
+        return pair.name.indexOf(name.toUpperCase()) != -1;
+      });
+    }
+  }
+
+  $: {
+    console.log('got search', name);
+    searchPairs();
+  }
+
 </script>
 
 <svelte:head>
@@ -50,6 +69,16 @@
       </div>
     </div>
     <div class="ml-4 mt-4 flex-shrink-0 flex">
+      <form class="space-y-8 divide-y divide-gray-200">
+        <div class="mt-1 relative flex items-center">
+          <input type="text" name="search" id="search"  placeholder="Search for Pairs" bind:value={name} class="px-2 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md">
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <span class="text-gray-500 sm:text-sm" id="price-currency"> 🔎  </span>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="ml-4 mt-4 flex-shrink-0 flex">
       <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{pairsData.cid}">
         <!-- Heroicon name: solid/phone -->
         <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -65,7 +94,8 @@
       </a>
     </div>
   </div>
-</div><div class="flex flex-col">
+</div>
+<div class="flex flex-col">
   <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
       <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -100,10 +130,10 @@
             </tr>
           </thead>
           <tbody>
-            {#each pairsData.data as pool, index}
-            <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
+            {#each pairsData.data as pool, i}
+            <tr class={(i+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {index+1}
+                {i+1}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {pool.name}
