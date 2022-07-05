@@ -27,9 +27,14 @@
         cid: response.data.cid
       }
       searchTokens();
+      localStorage.removeItem('pooler_cf_force');
     }
     catch (e){
       console.error('tokens', e);
+      if (!localStorage.getItem('pooler_cf_force')){
+        localStorage.setItem('pooler_cf_force', 'true');
+        location.reload();
+      }
     }
   });
 

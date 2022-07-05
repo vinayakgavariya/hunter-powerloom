@@ -52,9 +52,14 @@
         txHash: response.data.txHash,
         cid: response.data.cid
       }
+      localStorage.removeItem('pooler_cf_force');
     }
     catch (e){
       console.error('pairs', e);
+      if (!localStorage.getItem('pooler_cf_force')){
+        localStorage.setItem('pooler_cf_force', 'true');
+        location.reload();
+      }
     }
     try {
       response = await axios.get(API_PREFIX+'/v1/api/v2-tokens');
