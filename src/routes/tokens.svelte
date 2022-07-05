@@ -72,7 +72,7 @@
       <div class="ml-4 mt-4 flex-shrink-0 flex">
         <form class="space-y-8 divide-y divide-gray-200">
           <div class="mt-1 relative flex items-center">
-            <input type="text" name="search" id="search"  placeholder="Search for Pairs" bind:value={name} class="px-2 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md">
+            <input type="text" name="search" id="search"  placeholder="Search for Tokens" bind:value={name} class="px-2 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md">
             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
               <span class="text-gray-500 sm:text-sm" id="price-currency"> 🔎  </span>
             </div>
