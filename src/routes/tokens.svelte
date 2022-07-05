@@ -116,9 +116,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
+              <!--
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price Change
               </th>
+              -->
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
@@ -142,6 +144,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.price}
               </td>
+              {#if 0}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {#if token.price_change_24h[0] == "+"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
@@ -171,6 +174,7 @@
                 </p>
                 {/if}
               </td>
+              {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.volume_24h}
               </td>
