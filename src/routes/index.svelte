@@ -111,6 +111,24 @@
   </dl>
 </div>
 {/if}
+<!-- This example requires Tailwind CSS v2.0+ -->
+<div class="rounded-md bg-yellow-50 p-4">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <!-- Heroicon name: solid/exclamation -->
+      <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-3">
+      <h3 class="text-sm font-medium text-yellow-800">Reset in progress</h3>
+      <div class="mt-2 text-sm text-yellow-700">
+        <p>We observed an issue with snapshotting and have reset the data - volume and other 24 hour data will catch up soon!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 {#if statsData }
 <div>
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,6 +144,7 @@
         <p class="text-xl font-semibold text-gray-900">
           {statsData.volume24.currentValue ? statsData.volume24.currentValue : "$2.31b"}
         </p>
+        {#if 0}
         {#if statsData.volume24.change == undefined || statsData.volume24.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
@@ -149,6 +168,7 @@
           {statsData.volume24.change.substr(1)}
         </p>
         {/if}
+        {/if}
       </dd>
     </div>
 
@@ -164,6 +184,7 @@
         <p class="text-xl font-semibold text-gray-900">
           {statsData.tvl.currentValue ? statsData.tvl.currentValue : "$3.78b"}
         </p>
+        {#if 0}
         {#if statsData.tvl.change == undefined || statsData.tvl.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
@@ -187,6 +208,7 @@
           {statsData.tvl.change.substr(1)}
         </p>
         {/if}
+        {/if}
       </dd>
     </div>
 
@@ -202,6 +224,7 @@
         <p class="text-xl font-semibold text-gray-900">
           {statsData.fees24.currentValue ? statsData.fees24.currentValue : "$$4.71m"}
         </p>
+        {#if 0}
         {#if statsData.fees24.change == undefined || statsData.fees24.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
@@ -224,6 +247,7 @@
           </span>
           {statsData.fees24.change.substr(1)}
         </p>
+        {/if}
         {/if}
       </dd>
     </div>
@@ -392,9 +416,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
+              <!--
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price Change
               </th>
+              -->
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
@@ -418,6 +444,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.price}
               </td>
+              {#if 0}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {#if token.price_change_24h[0] == "+"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
@@ -447,6 +474,7 @@
                 </p>
                 {/if}
               </td>
+              {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.volume_24h}
               </td>
