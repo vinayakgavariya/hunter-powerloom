@@ -116,6 +116,7 @@
   </dl>
 </div>
 {/if}
+{#if 0}
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="rounded-md bg-yellow-50 p-4">
   <div class="flex">
@@ -133,7 +134,7 @@
     </div>
   </div>
 </div>
-
+{/if}
 {#if statsData }
 <div>
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
