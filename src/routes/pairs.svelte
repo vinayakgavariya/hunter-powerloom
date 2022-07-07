@@ -58,6 +58,7 @@
   <title>Pairs</title>
 </svelte:head>
 <!-- This example requires Tailwind CSS v2.0+ -->
+<div class="pt-4">
 <div class="bg-white px-4 py-5 shadow overflow-hidden border-b border-gray-200 sm:rounded-lg sm:px-6 ">
   <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
     <div class="ml-4 mt-4">
@@ -169,4 +170,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>
