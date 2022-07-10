@@ -9,6 +9,7 @@
 
   let tokenData = {data:[], fullData:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static';
+  let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   let name = '';
 
   onMount(async () => {
@@ -121,7 +122,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
-              {#if 1}
+              {#if !recentReset}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price Change
               </th>
@@ -149,7 +150,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.price}
               </td>
-              {#if 1}
+              {#if !recentReset}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {#if token.price_change_24h[0] == "+"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">

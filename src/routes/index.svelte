@@ -26,6 +26,7 @@
   let pairsData = {data:[]};
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
+  let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
@@ -132,7 +133,7 @@
         <p class="text-xl font-semibold text-gray-900">
           {statsData.volume24.currentValue ? statsData.volume24.currentValue : "$2.31b"}
         </p>
-        {#if 1}
+        {#if !recentReset}
         {#if statsData.volume24.change == undefined || statsData.volume24.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
@@ -172,7 +173,7 @@
         <p class="text-xl font-semibold text-gray-900">
           {statsData.tvl.currentValue ? statsData.tvl.currentValue : "$3.78b"}
         </p>
-        {#if 1}
+        {#if !recentReset}
         {#if statsData.tvl.change == undefined || statsData.tvl.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
@@ -212,7 +213,7 @@
         <p class="text-xl font-semibold text-gray-900">
           {statsData.fees24.currentValue ? statsData.fees24.currentValue : "$$4.71m"}
         </p>
-        {#if 1}
+        {#if !recentReset}
         {#if statsData.fees24.change == undefined || statsData.fees24.change.substr(0, 1) != "-"}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
@@ -404,7 +405,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
-              {#if 1}
+              {#if !recentReset}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price Change
               </th>
@@ -432,7 +433,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.price}
               </td>
-              {#if 1}
+              {#if !recentReset}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {#if token.price_change_24h[0] == "+"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
