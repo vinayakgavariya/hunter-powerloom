@@ -51,8 +51,10 @@
         block_timestamp: new Date(response.data.block_timestamp*1000),
         data: response.data.data.slice(0, 10),
         txHash: response.data.txHash,
+        begin_block_timestamp_7d: response.data.begin_block_timestamp_7d,
         cid: response.data.cid
       }
+      console.log(new Date(response.data.begin_block_timestamp_7d*1000));
       localStorage.removeItem('pooler_cf_force');
     }
     catch (e){
@@ -298,11 +300,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              <!--
+              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
-              -->
+              {/if}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
@@ -328,11 +330,11 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {pair.volume_24h}
               </td>
-              <!--
+              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {pair.volume_7d}
               </td>
-              -->
+              {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {pair.fees_24h}
               </td>
