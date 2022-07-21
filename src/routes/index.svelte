@@ -130,7 +130,7 @@
       </svg>
     </div>
     <div class="ml-3 flex-1 md:flex md:justify-between">
-      <p class="text-sm text-blue-700">We current show stats for a specific list of pairs/pools with high liquidity. Dynamic support for other pairs will be added soon!</p>
+      <p class="text-sm text-blue-700">We currently show stats for a specific list of pairs with high liquidity. Dynamic support for other pairs will be added soon!</p>
       <p class="mt-3 text-sm md:mt-0 md:ml-6">
         <a href="/pairs" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">Current Pairs <span aria-hidden="true">&rarr;</span></a>
       </p>
