@@ -9,6 +9,7 @@
 
   let pairsData = {data:[], fullData:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX;
+  const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
   let name = '';
 
   onMount(async () => {
@@ -16,7 +17,7 @@
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/v2-pairs');
+      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-pairs');
       console.log('got pairs', response.data);
       pairsData = {
         block_height: response.data.block_height,
@@ -57,7 +58,7 @@
 </script>
 
 <svelte:head>
-  <title>Pairs</title>
+  <title>{V3 ? 'Pools' : 'Pairs'}</title>
 </svelte:head>
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="pt-4">
@@ -69,7 +70,7 @@
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
         </div>
         <div class="ml-4">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">Top Pairs</h3>
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
             {#if pairsData.block_height}Synced to <a href="https://etherscan.io/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
           </p>

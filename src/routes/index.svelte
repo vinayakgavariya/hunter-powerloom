@@ -27,12 +27,13 @@
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
+  const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/v2-daily-stats');
+      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-daily-stats');
       console.log('got stats', response.data);
       if (response.data.data) {
         statsData = response.data.data;
@@ -44,7 +45,7 @@
       console.error('stats', e);
     }
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/v2-pairs');
+      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-pairs');
       console.log('got pairs', response.data);
       pairsData = {
         block_height: response.data.block_height,
@@ -65,7 +66,7 @@
       }
     }
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/v2-tokens');
+      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-tokens');
       console.log('got tokens', response.data);
       tokenData = {
         block_height: response.data.block_height,
@@ -130,9 +131,9 @@
       </svg>
     </div>
     <div class="ml-3 flex-1 md:flex md:justify-between">
-      <p class="text-sm text-blue-700">We currently show stats for a specific list of pairs with high liquidity. Dynamic support for other pairs will be added soon!</p>
+      <p class="text-sm text-blue-700">We currently show stats for a specific list of {V3 ? 'pools' : 'pairs'} with high liquidity. Dynamic support for other {V3 ? 'pools' : 'pairs'} will be added soon!</p>
       <p class="mt-3 text-sm md:mt-0 md:ml-6">
-        <a href="/pairs" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">Current Pairs <span aria-hidden="true">&rarr;</span></a>
+        <a href="/pairs" class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600">Current {V3 ? 'Pools' : 'Pairs'} <span aria-hidden="true">&rarr;</span></a>
       </p>
   </div>
   </div>
@@ -272,7 +273,7 @@
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
         </div>
         <div class="ml-4">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">Top Pairs</h3>
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
             {#if pairsData.block_height}Synced to <a href="https://etherscan.io/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
           </p>

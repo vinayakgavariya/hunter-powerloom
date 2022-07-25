@@ -7,6 +7,8 @@
     console.log('got slug', slug);
   }
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
+  const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
+  console.log(import.meta.env.VITE_UNISWAPV3, V3 ? 'V3' : 'V2');
 </script>
 
 <!-- This example requires Tailwind CSS v2.0+ -->
@@ -34,7 +36,7 @@
             </a>
 
             <a href="/pairs" class="{slug == 'pairs' ? 'border-indigo-500' : 'border-transparent'} text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-              Pairs
+              {V3 ? 'Pools': 'Pairs'}
             </a>
 
             <a href="/tokens" class="{slug == 'tokens' ? 'border-indigo-500' : 'border-transparent'} text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -142,7 +144,7 @@
     <header>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold leading-tight text-gray-900 capitalize">
-          Uniswap V2 {slug == "" ? "overview" : slug}
+          Uniswap {V3 ? 'V3' : 'V2'} {slug == "" ? "overview" : (slug == 'pairs' && V3 ? 'pools' : slug)}
         </h1>
       </div>
     </header>

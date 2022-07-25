@@ -10,6 +10,7 @@
   let tokenData = {data:[], fullData:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static';
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
+  const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
   let name = '';
 
   onMount(async () => {
@@ -17,7 +18,7 @@
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/v2-tokens');
+      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-tokens');
       console.log('got tokens', response.data);
       tokenData = {
         block_height: response.data.block_height,
