@@ -8,6 +8,7 @@
   }
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
+  const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'V3' : 'V2');
   console.log(import.meta.env.VITE_UNISWAPV3, V3 ? 'V3' : 'V2');
 </script>
 
@@ -144,7 +145,7 @@
     <header>
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold leading-tight text-gray-900 capitalize">
-          Uniswap {V3 ? 'V3' : 'V2'} {slug == "" ? "overview" : (slug == 'pairs' && V3 ? 'pools' : slug)}
+          {APP_NAME} {slug == "" ? "overview" : (slug == 'pairs' && V3 ? 'pools' : slug)}
         </h1>
       </div>
     </header>
