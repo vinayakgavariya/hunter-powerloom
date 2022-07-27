@@ -28,6 +28,7 @@
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
+	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'V3' : 'V2');
 
   onMount(async () => {
     console.log('API', API_PREFIX);
@@ -84,7 +85,7 @@
 </script>
 
 <svelte:head>
-  <title>Home</title>
+  <title>{APP_NAME} Overview</title>
 </svelte:head>
 
 <!-- This example requires Tailwind CSS v2.0+ -->
