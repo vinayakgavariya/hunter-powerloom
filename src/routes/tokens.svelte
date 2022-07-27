@@ -154,7 +154,7 @@
               </td>
               {#if !recentReset}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {#if token.price_change_24h[0] == "+"}
+                {#if (token.price_change_24h[0] == "+" || !isNaN(token.price_change_24h[0])) && token.price_change_24h != "0.0%"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <!-- Heroicon name: solid/arrow-sm-up -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -165,7 +165,7 @@
                   </span>
                   {token.price_change_24h}
                 </p>
-                {:else if token.price_change_24h[0] == "-"}
+                {:else if token.price_change_24h[0] == "-" && token.price_change_24h != "-0.0%"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
                   <!-- Heroicon name: solid/arrow-sm-down -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -178,7 +178,7 @@
                 </p>
                 {:else}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-grey-600">
-                  ~{token.price_change_24h}
+                  ~{isNaN(token.price_change_24h[0]) ? token.price_change_24h.substr(1): token.price_change_24h}
                 </p>
                 {/if}
               </td>
