@@ -441,7 +441,7 @@
             {#each tokenData.data as token, index}
             <tr class={(index+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {index}
+                {index+1}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {token.name}
