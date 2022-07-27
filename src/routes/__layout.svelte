@@ -6,6 +6,7 @@
     slug = $page.url.pathname.substr(1);
     console.log('got slug', slug);
   }
+  let showMobileMenu = false;
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
   const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'V3' : 'V2');
@@ -87,7 +88,7 @@
         </div>
         <div class="-mr-2 flex items-center sm:hidden">
           <!-- Mobile menu button -->
-          <button type="button" class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+          <button type="button" class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-controls="mobile-menu" on:click={() => showMobileMenu = !showMobileMenu} aria-expanded="false">
             <span class="sr-only">Open main menu</span>
             <!--
               Heroicon name: outline/menu
@@ -111,6 +112,7 @@
     </div>
 
     <!-- Mobile menu, show/hide based on menu state. -->
+    {#if showMobileMenu}
     <div class="sm:hidden" id="mobile-menu">
       <div class="pt-2 pb-3 space-y-1">
         <!-- Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800" -->
@@ -138,6 +140,7 @@
         </div>
       </div>
     </div>
+    {/if}
   </nav>
 
   <div class="py-10">
