@@ -50,6 +50,7 @@
       console.log('got pairs', response.data);
       pairsData = {
         block_height: response.data.block_height,
+        block_timestamp_ms: response.data.block_timestamp*1000,
         block_timestamp: new Date(response.data.block_timestamp*1000),
         data: response.data.data.slice(0, 10),
         txHash: response.data.txHash,
@@ -71,6 +72,7 @@
       console.log('got tokens', response.data);
       tokenData = {
         block_height: response.data.block_height,
+        block_timestamp_ms: response.data.block_timestamp*1000,
         block_timestamp: new Date(response.data.block_timestamp*1000),
         data: response.data.data.slice(0, 10),
         txHash: response.data.txHash,
@@ -276,7 +278,8 @@
         <div class="ml-4">
           <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
-            {#if pairsData.block_height}Synced to <a href="https://etherscan.io/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
+            {#if pairsData.block_height}Synced to <a href="https://etherscan.io/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{#if (pairsData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
+            {/if}
           </p>
         </div>
       </div>
@@ -383,7 +386,8 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Top Tokens</h3>
             <p class="text-sm text-gray-500">
-              {#if tokenData.block_height}Synced to <a href="https://etherscan.io/block/{tokenData.block_height}"class="text-indigo-800" target="_blank">{tokenData.block_height}</a> <Time relative timestamp={tokenData.block_timestamp} />{/if}
+              {#if tokenData.block_height}Synced to <a href="https://etherscan.io/block/{tokenData.block_height}"class="text-indigo-800" target="_blank">{tokenData.block_height}</a> <Time relative timestamp={tokenData.block_timestamp} />{#if (tokenData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
+              {/if}
             </p>
           </div>
         </div>
