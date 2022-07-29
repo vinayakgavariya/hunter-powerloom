@@ -18,11 +18,13 @@
   const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   console.log(import.meta.env.VITE_UNISWAPV3, V3 ? 'V3' : 'V2');
   onMount(async () => {
-		const checkInfo = localStorage.getItem('powerloom_'+APP_NAME);
-		if (location.hash == "#about" || !checkInfo){
-			showInfo.set(true);
-			localStorage.setItem('powerloom_'+APP_NAME, true);
-		}
+    setTimeout(() => {
+      const checkInfo = localStorage.getItem('powerloom_'+APP_NAME);
+      if (location.hash == "#about" || !checkInfo){
+        showInfo.set(true);
+        localStorage.setItem('powerloom_'+APP_NAME, true);
+      }
+    }, 500);
   });
 
   function handleKeydown(e){
