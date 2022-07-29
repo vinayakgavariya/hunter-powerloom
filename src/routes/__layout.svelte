@@ -24,7 +24,17 @@
 			localStorage.setItem('powerloom_'+APP_NAME, true);
 		}
   });
+
+  function handleKeydown(e){
+    if (showInfo && e.key == "Escape"){
+      console.log('got escape, closing modal');
+      showInfo.set(false);
+    }
+  }
+
 </script>
+
+<svelte:window on:keydown={handleKeydown}/>
 
 <!-- This example requires Tailwind CSS v2.0+ -->
 <!--
