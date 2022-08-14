@@ -12,6 +12,7 @@
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'V3' : 'V2');
+  let showChangeData = true;
   let name = '';
 
   onMount(async () => {
@@ -28,6 +29,17 @@
         fullData: response.data.data,
         txHash: response.data.txHash,
         cid: response.data.cid
+      }
+      if (tokenData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
+        //*
+        if (tokenData.begin_block_timestamp_7d*1000 > (+new Date()-86400000)) {
+          recentReset = true;
+          console.warn('data was recently reset!');
+        } else {
+          console.warn('data is less than 2 days old, hiding percentage changes..');
+        }
+        //*/
+        showChangeData = false;
       }
       searchTokens();
       localStorage.removeItem('pooler_cf_force');
@@ -60,6 +72,25 @@
 <svelte:head>
   <title>{APP_NAME} Tokens</title>
 </svelte:head>
+{#if recentReset}
+<!-- This example requires Tailwind CSS v2.0+ -->
+<div class="rounded-md bg-yellow-50 p-4">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <!-- Heroicon name: solid/exclamation -->
+      <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+      </svg>
+    </div>
+    <div class="ml-3">
+      <h3 class="text-sm font-medium text-yellow-800">Reset in progress</h3>
+      <div class="mt-2 text-sm text-yellow-700">
+        <p>We observed an issue with snapshotting and have reset the data - volume and other 24 hour data will catch up soon!</p>
+      </div>
+    </div>
+  </div>
+</div>
+{/if}
 <!-- This example requires Tailwind CSS v2.0+ -->
 <div class="pt-4">
   <div class="bg-white px-4 py-5 shadow overflow-hidden border-b border-gray-200 sm:rounded-lg sm:px-6 ">
@@ -124,7 +155,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price
               </th>
-              {#if !recentReset}
+              {#if showChangeData}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Price Change
               </th>
@@ -152,7 +183,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.price}
               </td>
-              {#if !recentReset}
+              {#if showChangeData}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {#if (token.price_change_24h[0] == "+" || !isNaN(token.price_change_24h[0])) && token.price_change_24h != "0.0%"}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
