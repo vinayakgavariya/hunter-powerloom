@@ -15,6 +15,7 @@
   }
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
+  const INFO_URL = import.meta.env.VITE_APP_INFO_URL || 'https://v2.info.uniswap.org/home';
   const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   console.log(import.meta.env.VITE_UNISWAPV3, V3 ? 'V3' : 'V2');
   onMount(async () => {
@@ -223,7 +224,7 @@
                 <div class="text-center">
                   <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">{APP_NAME} Info by PowerLoom Protocol</h3>
                   <div class="mt-2">
-                    <p class="text-sm text-gray-500">We snapshot on-chain data from <a href="https://v2.info.uniswap.org/home" class="text-black hover:text-gray-500" target="_blank" rel="noopener noreferer">{APP_NAME}</a> to give you actionable insights in a transparent way. You may further inspect the data on IPFS and the transaction proof on each snapshot. Read more about this on our <a href="https://medium.com/powerloom/pooler-v1-e6ddcd6e3f8b" target="_blank" rel="noopener noreferer" class="text-black hover:text-gray-500">blog</a>. If something seems off, feel free to ping us on <a href="https://discord.gg/WkYeZK3hC8" class="text-black hover:text-gray-500" target="_blank" rel="noopener noreferer">Discord</a>.</p>
+                    <p class="text-sm text-gray-500">We snapshot on-chain data from <a href="{INFO_URL}" class="text-black hover:text-gray-500" target="_blank" rel="noopener noreferer">{APP_NAME}</a> to give you actionable insights in a transparent way. You may further inspect the data on IPFS and the transaction proof on each snapshot. Read more about this on our <a href="https://medium.com/powerloom/pooler-v1-e6ddcd6e3f8b" target="_blank" rel="noopener noreferer" class="text-black hover:text-gray-500">blog</a>. If something seems off, feel free to ping us on <a href="https://discord.gg/WkYeZK3hC8" class="text-black hover:text-gray-500" target="_blank" rel="noopener noreferer">Discord</a>.</p>
                   </div>
                 </div>
               </div>
