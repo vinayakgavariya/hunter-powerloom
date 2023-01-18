@@ -1,0 +1,3 @@
+node_modules
+.svelte-kit
+npm-debug.log
