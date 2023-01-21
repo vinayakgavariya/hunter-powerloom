@@ -7,7 +7,7 @@ name: Docker
 
 on:
   release:
-    types: ['unpublished']
+    types: ['published']
   push:
     branches: [ "dockerify" ]
     # Publish semver tags as releases.
