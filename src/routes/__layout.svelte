@@ -269,7 +269,7 @@
           </a>
         </div>
         <div class="mt-8 md:mt-0 md:order-1">
-          <p class="text-center text-base text-gray-400">&copy; 2023 PowerLoom, Inc. All rights reserved.</p>
+          <p class="text-center text-base text-gray-400">&copy; {new Date().getFullYear()} PowerLoom, Inc. All rights reserved.</p>
         </div>
       </div>
     </footer>
