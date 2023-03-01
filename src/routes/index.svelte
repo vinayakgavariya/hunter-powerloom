@@ -116,7 +116,7 @@
     <div class="ml-3">
       <h3 class="text-sm font-medium text-yellow-800">Reset in progress</h3>
       <div class="mt-2 text-sm text-yellow-700">
-        <p>We observed an issue with snapshotting and have reset the data - volume and other 24 hour data will catch up soon!</p>
+        <p>This node recently started snapshotting from scratch - volume and other 24 hour data will catch up soon!</p>
       </div>
     </div>
   </div>

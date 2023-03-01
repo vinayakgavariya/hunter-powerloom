@@ -1,1 +1,1 @@
-docker build -t pooler-frontend .
+docker build -t powerloom-pooler-frontend .
