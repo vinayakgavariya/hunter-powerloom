@@ -15,21 +15,49 @@
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   let showChangeData = true;
   let name = '';
+  let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
+  let currentEpoch = null;
+  let epochInfo = null;
 
   onMount(async () => {
     name = location.search.substr(8);
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-pairs');
+      response = await axios.get(API_PREFIX+`/current_epoch`);
+      console.log('got epoch', response.data);
+      if (response.data) {
+        currentEpoch = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('currentEpoch', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/epoch/${currentEpoch.epochId-1}`);
+      console.log('got epoch info', response.data);
+      if (response.data) {
+        epochInfo = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
       console.log('got pairs', response.data);
       pairsData = {
-        block_height: response.data.block_height,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data,
-        fullData: response.data.data,
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.pairs,
+        fullData: response.data.pairs,
         txHash: response.data.txHash,
-        begin_block_timestamp_7d: response.data.begin_block_timestamp_7d,
+        begin_block_timestamp_7d: 0,
         cid: response.data.cid
       };
       console.log(new Date(response.data.begin_block_timestamp_7d*1000));
@@ -159,11 +187,6 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Volume 7D
-              </th>
-              {/if}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
@@ -187,15 +210,10 @@
                 {pool.liquidity}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.volume_24h}
+                {pool.volume24h}
               </td>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.volume_7d}
-              </td>
-              {/if}
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.fees_24h}
+                {pool.fee24h}
               </td>
               <!--
               <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">

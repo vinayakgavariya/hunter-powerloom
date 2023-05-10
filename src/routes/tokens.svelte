@@ -15,19 +15,47 @@
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'V3' : 'V2');
   let showChangeData = true;
   let name = '';
+  let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
+  let currentEpoch = null;
+  let epochInfo = null;
 
   onMount(async () => {
     name = location.search.substr(8);
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-tokens');
+      response = await axios.get(API_PREFIX+`/current_epoch`);
+      console.log('got epoch', response.data);
+      if (response.data) {
+        currentEpoch = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('currentEpoch', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/epoch/${currentEpoch.epochId-1}`);
+      console.log('got epoch info', response.data);
+      if (response.data) {
+        epochInfo = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
       console.log('got tokens', response.data);
       tokenData = {
-        block_height: response.data.block_height,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data,
-        fullData: response.data.data,
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.tokens,
+        fullData: response.data.tokens,
         txHash: response.data.txHash,
         cid: response.data.cid
       }
@@ -188,7 +216,7 @@
               </td>
               {#if showChangeData}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {#if (token.price_change_24h[0] == "+" || !isNaN(token.price_change_24h[0])) && token.price_change_24h != "0.0%"}
+                {#if (token.priceChange24h >=0) }
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <!-- Heroicon name: solid/arrow-sm-up -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -197,9 +225,9 @@
                   <span class="sr-only">
                     Increased by
                   </span>
-                  {token.price_change_24h}
+                  {token.priceChange24h}
                 </p>
-                {:else if token.price_change_24h[0] == "-" && token.price_change_24h != "-0.0%"}
+                {:else if (token.priceChange24h < 0)}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
                   <!-- Heroicon name: solid/arrow-sm-down -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -210,15 +238,11 @@
                   </span>
                   {token.price_change_24h}
                 </p>
-                {:else}
-                <p class="ml-2 flex items-baseline text-sm font-semibold text-grey-600">
-                  ~{isNaN(token.price_change_24h[0]) ? token.price_change_24h.substr(1): token.price_change_24h}
-                </p>
                 {/if}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.volume_24h}
+                {token.volume24h}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.liquidity}

@@ -24,6 +24,8 @@
     "2005-01-05": 21
   }
   let statsData = null;
+  let currentEpoch = null;
+  let epochInfo = null;
   let pairsData = {data:[]};
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
@@ -31,15 +33,44 @@
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   let showChangeData = true;
+  let stats_project_id = 'aggregate_uniswap_24h_stats_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
+  let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
+  let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
+    
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-daily-stats');
+      response = await axios.get(API_PREFIX+`/current_epoch`);
+      console.log('got epoch', response.data);
+      if (response.data) {
+        currentEpoch = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('currentEpoch', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/epoch/${currentEpoch.epochId-1}`);
+      console.log('got epoch info', response.data);
+      if (response.data) {
+        epochInfo = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${stats_project_id}/`);
       console.log('got stats', response.data);
-      if (response.data.data) {
-        statsData = response.data.data;
+      if (response.data) {
+        statsData = response.data;
       } else {
         throw new Error(JSON.stringify(response.data));
       }
@@ -47,17 +78,18 @@
     catch (e){
       console.error('stats', e);
     }
+    
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-pairs');
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
       console.log('got pairs', response.data);
       pairsData = {
-        block_height: response.data.block_height,
-        block_timestamp_ms: response.data.block_timestamp*1000,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data.slice(0, 10),
-        txHash: response.data.txHash,
-        begin_block_timestamp_7d: response.data.begin_block_timestamp_7d,
-        cid: response.data.cid
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.pairs.slice(0, 10),
+        txHash: 0,
+        begin_block_timestamp_7d: 0,
+        cid: 0
       }
       console.log(new Date(response.data.begin_block_timestamp_7d*1000));
       if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
@@ -81,13 +113,13 @@
       }
     }
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-tokens');
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
       console.log('got tokens', response.data);
       tokenData = {
-        block_height: response.data.block_height,
-        block_timestamp_ms: response.data.block_timestamp*1000,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data.slice(0, 10),
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.tokens.slice(0, 10),
         txHash: response.data.txHash,
         cid: response.data.cid
       }
@@ -186,10 +218,10 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.volume24.currentValue ? statsData.volume24.currentValue : "$2.31b"}
+          {statsData.volume24h ? statsData.volume24h : "$2.31b"}
         </p>
         {#if showChangeData}
-        {#if statsData.volume24.change == undefined || statsData.volume24.change.substr(0, 1) != "-"}
+        {#if statsData.volumeChange24h == undefined || statsData.volumeChange24h > 0}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -198,7 +230,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.volume24.change == undefined ? "65.62%" : statsData.volume24.change}
+          {statsData.volumeChange24h == undefined ? "65.62%" : statsData.volumeChange24h}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -209,7 +241,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.volume24.change.substr(1)}
+          {statsData.volumeChange24h}
         </p>
         {/if}
         {/if}
@@ -226,10 +258,10 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.tvl.currentValue ? statsData.tvl.currentValue : "$3.78b"}
+          {statsData.tvl ? statsData.tvl : "$3.78b"}
         </p>
         {#if showChangeData}
-        {#if statsData.tvl.change == undefined || statsData.tvl.change.substr(0, 1) != "-"}
+        {#if statsData.tvlChange24h == undefined || statsData.tvlChange24h > 0}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -238,7 +270,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.tvl.change == undefined ? "65.62%" : statsData.tvl.change}
+          {statsData.tvlChange24h == undefined ? "65.62%" : statsData.tvlChange24h}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -249,7 +281,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.tvl.change.substr(1)}
+          {statsData.tvlChange24h}
         </p>
         {/if}
         {/if}
@@ -266,10 +298,10 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.fees24.currentValue ? statsData.fees24.currentValue : "$$4.71m"}
+          {statsData.fee24h ? statsData.fee24h : "$$4.71m"}
         </p>
         {#if showChangeData}
-        {#if statsData.fees24.change == undefined || statsData.fees24.change.substr(0, 1) != "-"}
+        {#if statsData.feeChange24h == undefined || statsData.feeChange24h > 0}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -278,7 +310,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.fees24.change == undefined ? "65.62%" : statsData.fees24.change}
+          {statsData.feeChange24h == undefined ? "65.62%" : statsData.feeChange24h}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -289,7 +321,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.fees24.change.substr(1)}
+          {statsData.feeChange24h}
         </p>
         {/if}
         {/if}
@@ -356,11 +388,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              <!-- {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
-              {/if}
+              {/if} -->
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
@@ -384,15 +416,15 @@
                 {pair.liquidity}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.volume_24h}
+                {pair.volume24h}
               </td>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              <!-- {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {pair.volume_7d}
               </td>
-              {/if}
+              {/if} -->
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.fees_24h}
+                {pair.fee24h}
               </td>
               <!--
               <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
@@ -496,7 +528,7 @@
               </td>
               {#if showChangeData}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {#if (token.price_change_24h[0] == "+" || !isNaN(token.price_change_24h[0])) && token.price_change_24h != "0.0%"}
+                {#if (token.priceChange24h >= 0 )}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <!-- Heroicon name: solid/arrow-sm-up -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -505,9 +537,9 @@
                   <span class="sr-only">
                     Increased by
                   </span>
-                  {token.price_change_24h}
+                  {token.priceChange24h}
                 </p>
-                {:else if token.price_change_24h[0] == "-" && token.price_change_24h != "-0.0%"}
+                {:else if token.priceChange24h && token.priceChange24h != 0}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
                   <!-- Heroicon name: solid/arrow-sm-down -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -516,17 +548,13 @@
                   <span class="sr-only">
                     Decreased by
                   </span>
-                  {token.price_change_24h}
-                </p>
-                {:else}
-                <p class="ml-2 flex items-baseline text-sm font-semibold text-grey-600">
-                  ~{isNaN(token.price_change_24h[0]) ? token.price_change_24h.substr(1): token.price_change_24h}
+                  {token.priceChange24h}
                 </p>
                 {/if}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.volume_24h}
+                {token.volume24h}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {token.liquidity}
