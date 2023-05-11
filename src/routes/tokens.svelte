@@ -18,6 +18,10 @@
   let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
   let currentEpoch = null;
   let epochInfo = null;
+  let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
   onMount(async () => {
     name = location.search.substr(8);
@@ -212,7 +216,7 @@
                 {token.symbol}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.price}
+                {USDollar.format(token.price)}
               </td>
               {#if showChangeData}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -225,7 +229,7 @@
                   <span class="sr-only">
                     Increased by
                   </span>
-                  {token.priceChange24h}
+                  {`${(token.priceChange24h).toFixed(2)}%`}
                 </p>
                 {:else if (token.priceChange24h < 0)}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -236,16 +240,16 @@
                   <span class="sr-only">
                     Decreased by
                   </span>
-                  {token.price_change_24h}
+                  {`${(token.priceChange24h).toFixed(2)}%`}
                 </p>
                 {/if}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.volume24h}
+                {USDollar.format(token.volume24h)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.liquidity}
+                {USDollar.format(token.liquidity)}
               </td>
             </tr>
             {/each}

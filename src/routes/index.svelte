@@ -23,6 +23,12 @@
     "2005-01-04": 17,
     "2005-01-05": 21
   }
+
+  let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+
   let statsData = null;
   let currentEpoch = null;
   let epochInfo = null;
@@ -218,7 +224,7 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.volume24h ? statsData.volume24h : "$2.31b"}
+          {USDollar.format(statsData.volume24h)}
         </p>
         {#if showChangeData}
         {#if statsData.volumeChange24h == undefined || statsData.volumeChange24h > 0}
@@ -230,7 +236,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.volumeChange24h == undefined ? "65.62%" : statsData.volumeChange24h}
+          {`${(statsData.volumeChange24h).toFixed(2)}%`}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -241,7 +247,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.volumeChange24h}
+          {`${(statsData.volumeChange24h).toFixed(2)}%`}
         </p>
         {/if}
         {/if}
@@ -258,7 +264,8 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.tvl ? statsData.tvl : "$3.78b"}
+          {USDollar.format(statsData.tvl)}
+
         </p>
         {#if showChangeData}
         {#if statsData.tvlChange24h == undefined || statsData.tvlChange24h > 0}
@@ -270,7 +277,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.tvlChange24h == undefined ? "65.62%" : statsData.tvlChange24h}
+          {`${(statsData.tvlChange24h).toFixed(2)}%`}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -281,7 +288,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.tvlChange24h}
+          {`${(statsData.tvlChange24h).toFixed(2)}%`}
         </p>
         {/if}
         {/if}
@@ -298,7 +305,7 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.fee24h ? statsData.fee24h : "$$4.71m"}
+          {USDollar.format(statsData.fee24h)}
         </p>
         {#if showChangeData}
         {#if statsData.feeChange24h == undefined || statsData.feeChange24h > 0}
@@ -310,7 +317,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.feeChange24h == undefined ? "65.62%" : statsData.feeChange24h}
+          {`${(statsData.feeChange24h).toFixed(2)}%`}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -321,7 +328,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.feeChange24h}
+          {`${(statsData.feeChange24h).toFixed(2)}%`}
         </p>
         {/if}
         {/if}
@@ -413,10 +420,10 @@
                 {pair.name}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.liquidity}
+                {USDollar.format(pair.liquidity)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.volume24h}
+                {USDollar.format(pair.volume24h)}
               </td>
               <!-- {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -424,7 +431,7 @@
               </td>
               {/if} -->
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.fee24h}
+                {USDollar.format(pair.fee24h)}
               </td>
               <!--
               <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
@@ -524,7 +531,7 @@
                 {token.symbol}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.price}
+                {USDollar.format(token.price)}
               </td>
               {#if showChangeData}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -537,7 +544,7 @@
                   <span class="sr-only">
                     Increased by
                   </span>
-                  {token.priceChange24h}
+                  {`${(token.priceChange24h).toFixed(2)}%`}
                 </p>
                 {:else if token.priceChange24h && token.priceChange24h != 0}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -548,16 +555,16 @@
                   <span class="sr-only">
                     Decreased by
                   </span>
-                  {token.priceChange24h}
+                  {`${(token.priceChange24h).toFixed(2)}%`}
                 </p>
                 {/if}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.volume24h}
+                {USDollar.format(token.volume24h)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.liquidity}
+                {USDollar.format(token.liquidity)}
               </td>
             </tr>
             {/each}

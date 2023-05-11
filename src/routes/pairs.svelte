@@ -18,7 +18,10 @@
   let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
   let currentEpoch = null;
   let epochInfo = null;
-
+  let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
   onMount(async () => {
     name = location.search.substr(8);
     console.log('search', name);
@@ -207,13 +210,13 @@
                 {pool.name}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.liquidity}
+                {USDollar.format(pool.liquidity)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.volume24h}
+                {USDollar.format(pool.volume24h)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.fee24h}
+                {USDollar.format(pool.fee24h)}
               </td>
               <!--
               <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
