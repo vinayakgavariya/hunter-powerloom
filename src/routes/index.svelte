@@ -39,9 +39,9 @@
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   let showChangeData = true;
-  let stats_project_id = 'aggregate_uniswap_24h_stats_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
-  let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
-  let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs_03f33717b8ed28ca8444db5238873207eecf447b48e53fa0cc9ba604cb0dee4f_UNISWAPV2-ph15-prod';
+  let stats_project_id = 'aggregate_uniswap_24h_stats:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
