@@ -9,6 +9,8 @@
   import { anchorExplorerPrefix, explorerPrefix } from '../stores.js';
 
   let pairsData = {data:[], fullData:[]};
+  let pairsData7d = {};
+
   const API_PREFIX = import.meta.env.VITE_API_PREFIX;
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
@@ -16,6 +18,7 @@
   let showChangeData = true;
   let name = '';
   let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_pairs_7d_project_id = 'aggregate_uniswap_7d_top_pairs:e9ef15493ebc1be7640743c0b6a96fc2c33a7cbd5263eed9418c818b63a05254:UNISWAPV2-ph15-prod';
   let currentEpoch = null;
   let epochInfo = null;
   let USDollar = new Intl.NumberFormat('en-US', {
@@ -49,6 +52,20 @@
     }
     catch (e){
       console.error('EpochInfo', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      console.log('got stats', response.data);
+      if (response.data) {
+        for (let pair of response.data.pairs) {
+          pairsData7d[pair.name] = pair;
+        }
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('stats', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
@@ -190,14 +207,19 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
+              {#if pairsData7d}
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Volume 7D
+              </th>
+              {/if}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
-              <!--
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fees 1Y/Liquity
+                Fees 7D
               </th>
-              -->
+              {/if}
             </tr>
           </thead>
           <tbody>
@@ -215,14 +237,19 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pool.volume24h)}
               </td>
+              {#if pairsData7d}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {USDollar.format(pairsData7d[pool.name].volume7d)}
+              </td>
+              {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pool.fee24h)}
               </td>
-              <!--
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                {pool["1y_fees_liquidity"]}
+              {#if pairsData7d}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {USDollar.format(pairsData7d[pool.name].fee7d)}
               </td>
-              -->
+              {/if}
             </tr>
             {/each}
           </tbody>

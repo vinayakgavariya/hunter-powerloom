@@ -33,6 +33,7 @@
   let currentEpoch = null;
   let epochInfo = null;
   let pairsData = {data:[]};
+  let pairsData7d = {};
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
@@ -42,6 +43,7 @@
   let stats_project_id = 'aggregate_uniswap_24h_stats:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
   let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
   let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_pairs_7d_project_id = 'aggregate_uniswap_7d_top_pairs:e9ef15493ebc1be7640743c0b6a96fc2c33a7cbd5263eed9418c818b63a05254:UNISWAPV2-ph15-prod';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
@@ -84,7 +86,20 @@
     catch (e){
       console.error('stats', e);
     }
-    
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      console.log('got stats', response.data);
+      if (response.data) {
+        for (let pair of response.data.pairs) {
+          pairsData7d[pair.name] = pair;
+        }
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('stats', e);
+    }
     try {
       response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
       console.log('got pairs', response.data);
@@ -395,19 +410,19 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              <!-- {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
-              {/if} -->
+              {/if}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
-              <!--
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fees 1Y/Liquity
+                Fees 7D
               </th>
-              -->
+              {/if}
             </tr>
           </thead>
           <tbody>
@@ -425,19 +440,19 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pair.volume24h)}
               </td>
-              <!-- {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              {#if pairsData7d}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.volume_7d}
+                {USDollar.format(pairsData7d[pair.name].volume7d)}
               </td>
-              {/if} -->
+              {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pair.fee24h)}
               </td>
-              <!--
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                {pair["1y_fees_liquidity"]}
+              {#if pairsData7d}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {USDollar.format(pairsData7d[pair.name].fee7d)}
               </td>
-              -->
+              {/if}
             </tr>
             {/each}
           </tbody>
