@@ -40,6 +40,10 @@
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   let showChangeData = true;
+  let top_tokens_cid = '';
+  let top_pairs_cid = '';
+  let top_pairs_7d_cid = '';
+  let stats_cid = '';
   let stats_project_id = 'aggregate_uniswap_24h_stats:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
   let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
   let top_pairs_project_id = 'aggregate_uniswap_24h_top_pairs:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
@@ -99,6 +103,54 @@
     }
     catch (e){
       console.error('stats', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+        top_tokens_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${stats_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+        stats_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+        top_pairs_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+       top_pairs_7d_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
@@ -176,40 +228,6 @@
 </div>
 {/if}
 
-<!-- This example requires Tailwind CSS v2.0+ -->
-{#if 0}
-<div>
-  <!--
-  <h3 class="text-lg leading-6 font-medium text-gray-900">
-    Last 30 days
-  </h3>
-  -->
-  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
-    <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-      <dt>
-        <div class="absolute bg-indigo-500 rounded-md p-3">
-          <!-- Heroicon name: outline/users -->
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-        </div>
-        <p class="ml-16 text-sm font-medium text-gray-500 truncate">Liquidity</p>
-      </dt>
-      <LinkedChart { data } />
-    </div>
-
-    <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-      <dt>
-        <div class="absolute bg-indigo-500 rounded-md p-3">
-          <!-- Heroicon name: outline/mail-open -->
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        </div>
-        <p class="ml-16 text-sm font-medium text-gray-500 truncate">Volume 24H</p>
-      </dt>
-      <LinkedChart data ={ data2 } fill="#2172E5" />
-    </div>
-  </dl>
-</div>
-{/if}
-
 {#if statsData }
 <div class="rounded-md bg-blue-50 p-4">
   <div class="flex">
@@ -226,8 +244,19 @@
       </p>
   </div>
   </div>
+  
+</div>
+<div class="flex pull-right ">
+
+<a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{stats_cid}">
+  <!-- Heroicon name: solid/phone -->
+
+  <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+  <span> Data </span>
+</a>
 </div>
 <div>
+
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
       <dt>
@@ -372,12 +401,15 @@
       </div>
     </div>
     <div class="ml-4 mt-4 flex-shrink-0 flex">
-      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{pairsData.cid}">
+      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_cid}">
         <!-- Heroicon name: solid/phone -->
-        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-        </svg>
-        <span> IPFS </span>
+        <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+        <span> Data </span>
+      </a>
+      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_7d_cid}">
+        <!-- Heroicon name: solid/phone -->
+        <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+        <span> 7d Data </span>
       </a>
       {#if pairsData.txHash}
       <a class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="{$anchorExplorerPrefix}/tx/{pairsData.txHash}#eventlog">
@@ -482,12 +514,10 @@
         </div>
       </div>
       <div class="ml-4 mt-4 flex-shrink-0 flex">
-        <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{tokenData.cid}">
+        <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_tokens_cid}">
           <!-- Heroicon name: solid/phone -->
-          <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-          </svg>
-          <span> IPFS </span>
+          <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+          <span> Data </span>
         </a>
         {#if tokenData.txHash}
         <a class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="{$anchorExplorerPrefix}/tx/{tokenData.txHash}#eventlog">
