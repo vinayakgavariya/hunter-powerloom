@@ -70,7 +70,7 @@
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
-      console.log('got top tokens cid', response.data);
+      console.log('got top pairs cid', response.data);
       if (response.data) {
         top_pairs_cid = response.data;
       } else {
@@ -78,11 +78,11 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('top pairs cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
-      console.log('got top tokens cid', response.data);
+      console.log('got top pairs cid', response.data);
       if (response.data) {
         top_pairs_7d_cid = response.data;
       } else {
@@ -90,7 +90,7 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('top pairs cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
@@ -105,18 +105,7 @@
         begin_block_timestamp_7d: 0,
         cid: response.data.cid
       };
-      console.log(new Date(response.data.begin_block_timestamp_7d*1000));
-      if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
-        //*
-        if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-86400000)) {
-          recentReset = true;
-          console.warn('data was recently reset!');
-        } else {
-          console.warn('data is less than 2 days old, hiding percentage changes..');
-        }
-        //*/
-        showChangeData = false;
-      }
+      
       searchPairs();
       localStorage.removeItem('pooler_cf_force');
     }
@@ -179,7 +168,7 @@
         <div class="ml-4">
           <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
-            {#if pairsData.block_height}Synced to <a href="{$explorerPrefix}/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
+            {#if epochInfo}Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
           </p>
         </div>
       </div>

@@ -62,7 +62,7 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('top tokens cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
@@ -76,17 +76,7 @@
         txHash: response.data.txHash,
         cid: response.data.cid
       }
-      if (tokenData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
-        //*
-        if (tokenData.begin_block_timestamp_7d*1000 > (+new Date()-86400000)) {
-          recentReset = true;
-          console.warn('data was recently reset!');
-        } else {
-          console.warn('data is less than 2 days old, hiding percentage changes..');
-        }
-        //*/
-        showChangeData = false;
-      }
+     
       searchTokens();
       localStorage.removeItem('pooler_cf_force');
     }
@@ -149,7 +139,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Top Tokens</h3>
             <p class="text-sm text-gray-500">
-              {#if tokenData.block_height}Synced to <a href="{$explorerPrefix}/block/{tokenData.block_height}"class="text-indigo-800" target="_blank">{tokenData.block_height}</a> <Time relative timestamp={tokenData.block_timestamp} />{/if}
+              {#if epochInfo}Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={tokenData.block_timestamp} />{/if}
             </p>
           </div>
         </div>

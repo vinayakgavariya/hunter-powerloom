@@ -102,7 +102,7 @@
       }
     }
     catch (e){
-      console.error('stats', e);
+      console.error('7d top pairs', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
@@ -114,7 +114,7 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('7d top tokens cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${stats_project_id}/`);
@@ -126,7 +126,7 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('stats cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
@@ -138,7 +138,7 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('top pairs cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
@@ -150,7 +150,7 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('top pairs 7d cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
@@ -164,18 +164,7 @@
         begin_block_timestamp_7d: 0,
         cid: 0
       }
-      console.log(new Date(response.data.begin_block_timestamp_7d*1000));
-      if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
-        //*
-        if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-86400000)) {
-          recentReset = true;
-          console.warn('data was recently reset!');
-        } else {
-          console.warn('data is less than 2 days old, hiding percentage changes..');
-        }
-        //*/
-        showChangeData = false;
-      }
+    
       localStorage.removeItem('pooler_cf_force');
     }
     catch (e){
@@ -394,7 +383,7 @@
         <div class="ml-4">
           <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
-            {#if pairsData.block_height}Synced to <a href="{$explorerPrefix}/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{#if (pairsData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
+            {#if epochInfo }Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={pairsData.block_timestamp} />{#if (pairsData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
             {/if}
           </p>
         </div>
@@ -507,7 +496,7 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Top Tokens</h3>
             <p class="text-sm text-gray-500">
-              {#if tokenData.block_height}Synced to <a href="{$explorerPrefix}/block/{tokenData.block_height}"class="text-indigo-800" target="_blank">{tokenData.block_height}</a> <Time relative timestamp={tokenData.block_timestamp} />{#if (tokenData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
+              {#if epochInfo}Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={tokenData.block_timestamp} />{#if (tokenData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
               {/if}
             </p>
           </div>
