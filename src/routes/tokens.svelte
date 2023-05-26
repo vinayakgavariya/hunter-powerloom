@@ -16,7 +16,7 @@
   let showChangeData = true;
   let name = '';
   let top_tokens_cid = '';
-  let top_tokens_project_id = 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_tokens_project_id = import.meta.env.VITE_24H_TOP_TOKENS_PROJECT_ID || 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
   let currentEpoch = null;
   let epochInfo = null;
   let USDollar = new Intl.NumberFormat('en-US', {
