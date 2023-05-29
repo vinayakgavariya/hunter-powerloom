@@ -23,23 +23,66 @@
     "2005-01-04": 17,
     "2005-01-05": 21
   }
+
+  let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+
   let statsData = null;
+  let currentEpoch = null;
+  let epochInfo = null;
   let pairsData = {data:[]};
+  let pairsData7d = {};
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   let showChangeData = true;
+  let top_tokens_cid = '';
+  let top_pairs_cid = '';
+  let top_pairs_7d_cid = '';
+  let stats_cid = '';
+  let stats_project_id = import.meta.env.VITE_24H_STATS_PROJECT_ID || 'aggregate_uniswap_24h_stats:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_tokens_project_id = import.meta.env.VITE_24H_TOP_TOKENS_PROJECT_ID || 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_pairs_project_id = import.meta.env.VITE_24H_TOP_PAIRS_PROJECT_ID || 'aggregate_uniswap_24h_top_pairs:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
+  let top_pairs_7d_project_id = import.meta.env.VITE_7D_TOP_PAIRS_PROJECT_ID || 'aggregate_uniswap_7d_top_pairs:e9ef15493ebc1be7640743c0b6a96fc2c33a7cbd5263eed9418c818b63a05254:UNISWAPV2-ph15-prod';
 
   onMount(async () => {
     console.log('API', API_PREFIX);
+    
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-daily-stats');
+      response = await axios.get(API_PREFIX+`/current_epoch`);
+      console.log('got epoch', response.data);
+      if (response.data) {
+        currentEpoch = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('currentEpoch', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/epoch/${currentEpoch.epochId-1}`);
+      console.log('got epoch info', response.data);
+      if (response.data) {
+        epochInfo = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('EpochInfo', e);
+    }
+
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${stats_project_id}/`);
       console.log('got stats', response.data);
-      if (response.data.data) {
-        statsData = response.data.data;
+      if (response.data) {
+        statsData = response.data;
       } else {
         throw new Error(JSON.stringify(response.data));
       }
@@ -48,29 +91,80 @@
       console.error('stats', e);
     }
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-pairs');
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      console.log('got stats', response.data);
+      if (response.data) {
+        for (let pair of response.data.pairs) {
+          pairsData7d[pair.name] = pair;
+        }
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('7d top pairs', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+        top_tokens_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('7d top tokens cid', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${stats_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+        stats_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('stats cid', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+        top_pairs_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('top pairs cid', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      console.log('got top tokens cid', response.data);
+      if (response.data) {
+       top_pairs_7d_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('top pairs 7d cid', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
       console.log('got pairs', response.data);
       pairsData = {
-        block_height: response.data.block_height,
-        block_timestamp_ms: response.data.block_timestamp*1000,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data.slice(0, 10),
-        txHash: response.data.txHash,
-        begin_block_timestamp_7d: response.data.begin_block_timestamp_7d,
-        cid: response.data.cid
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.pairs.slice(0, 10),
+        txHash: 0,
+        begin_block_timestamp_7d: 0,
+        cid: 0
       }
-      console.log(new Date(response.data.begin_block_timestamp_7d*1000));
-      if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
-        //*
-        if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-86400000)) {
-          recentReset = true;
-          console.warn('data was recently reset!');
-        } else {
-          console.warn('data is less than 2 days old, hiding percentage changes..');
-        }
-        //*/
-        showChangeData = false;
-      }
+    
       localStorage.removeItem('pooler_cf_force');
     }
     catch (e){
@@ -81,13 +175,13 @@
       }
     }
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-tokens');
+      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
       console.log('got tokens', response.data);
       tokenData = {
-        block_height: response.data.block_height,
-        block_timestamp_ms: response.data.block_timestamp*1000,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data.slice(0, 10),
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.tokens.slice(0, 10),
         txHash: response.data.txHash,
         cid: response.data.cid
       }
@@ -123,40 +217,6 @@
 </div>
 {/if}
 
-<!-- This example requires Tailwind CSS v2.0+ -->
-{#if 0}
-<div>
-  <!--
-  <h3 class="text-lg leading-6 font-medium text-gray-900">
-    Last 30 days
-  </h3>
-  -->
-  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-2">
-    <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-      <dt>
-        <div class="absolute bg-indigo-500 rounded-md p-3">
-          <!-- Heroicon name: outline/users -->
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-        </div>
-        <p class="ml-16 text-sm font-medium text-gray-500 truncate">Liquidity</p>
-      </dt>
-      <LinkedChart { data } />
-    </div>
-
-    <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
-      <dt>
-        <div class="absolute bg-indigo-500 rounded-md p-3">
-          <!-- Heroicon name: outline/mail-open -->
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-        </div>
-        <p class="ml-16 text-sm font-medium text-gray-500 truncate">Volume 24H</p>
-      </dt>
-      <LinkedChart data ={ data2 } fill="#2172E5" />
-    </div>
-  </dl>
-</div>
-{/if}
-
 {#if statsData }
 <div class="rounded-md bg-blue-50 p-4">
   <div class="flex">
@@ -173,8 +233,19 @@
       </p>
   </div>
   </div>
+  
+</div>
+<div class="flex pull-right ">
+
+<a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{stats_cid}">
+  <!-- Heroicon name: solid/phone -->
+
+  <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+  <span> Data </span>
+</a>
 </div>
 <div>
+
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <div class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden">
       <dt>
@@ -186,10 +257,10 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.volume24.currentValue ? statsData.volume24.currentValue : "$2.31b"}
+          {USDollar.format(statsData.volume24h)}
         </p>
         {#if showChangeData}
-        {#if statsData.volume24.change == undefined || statsData.volume24.change.substr(0, 1) != "-"}
+        {#if statsData.volumeChange24h == undefined || statsData.volumeChange24h > 0}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -198,7 +269,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.volume24.change == undefined ? "65.62%" : statsData.volume24.change}
+          {`${(statsData.volumeChange24h).toFixed(2)}%`}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -209,7 +280,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.volume24.change.substr(1)}
+          {`${(statsData.volumeChange24h).toFixed(2)}%`}
         </p>
         {/if}
         {/if}
@@ -226,10 +297,11 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.tvl.currentValue ? statsData.tvl.currentValue : "$3.78b"}
+          {USDollar.format(statsData.tvl)}
+
         </p>
         {#if showChangeData}
-        {#if statsData.tvl.change == undefined || statsData.tvl.change.substr(0, 1) != "-"}
+        {#if statsData.tvlChange24h == undefined || statsData.tvlChange24h > 0}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -238,7 +310,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.tvl.change == undefined ? "65.62%" : statsData.tvl.change}
+          {`${(statsData.tvlChange24h).toFixed(2)}%`}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -249,7 +321,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.tvl.change.substr(1)}
+          {`${(statsData.tvlChange24h).toFixed(2)}%`}
         </p>
         {/if}
         {/if}
@@ -266,10 +338,10 @@
       </dt>
       <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
         <p class="text-xl font-semibold text-gray-900">
-          {statsData.fees24.currentValue ? statsData.fees24.currentValue : "$$4.71m"}
+          {USDollar.format(statsData.fee24h)}
         </p>
         {#if showChangeData}
-        {#if statsData.fees24.change == undefined || statsData.fees24.change.substr(0, 1) != "-"}
+        {#if statsData.feeChange24h == undefined || statsData.feeChange24h > 0}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
           <!-- Heroicon name: solid/arrow-sm-up -->
           <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -278,7 +350,7 @@
           <span class="sr-only">
             Increased by
           </span>
-          {statsData.fees24.change == undefined ? "65.62%" : statsData.fees24.change}
+          {`${(statsData.feeChange24h).toFixed(2)}%`}
         </p>
         {:else}
         <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
@@ -289,7 +361,7 @@
           <span class="sr-only">
             Decreased by
           </span>
-          {statsData.fees24.change.substr(1)}
+          {`${(statsData.feeChange24h).toFixed(2)}%`}
         </p>
         {/if}
         {/if}
@@ -311,19 +383,22 @@
         <div class="ml-4">
           <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
-            {#if pairsData.block_height}Synced to <a href="{$explorerPrefix}/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{#if (pairsData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
+            {#if epochInfo }Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={pairsData.block_timestamp} />{#if (pairsData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
             {/if}
           </p>
         </div>
       </div>
     </div>
     <div class="ml-4 mt-4 flex-shrink-0 flex">
-      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{pairsData.cid}">
+      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_cid}">
         <!-- Heroicon name: solid/phone -->
-        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-        </svg>
-        <span> IPFS </span>
+        <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+        <span> Data </span>
+      </a>
+      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_7d_cid}">
+        <!-- Heroicon name: solid/phone -->
+        <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+        <span> 7d Data </span>
       </a>
       {#if pairsData.txHash}
       <a class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="{$anchorExplorerPrefix}/tx/{pairsData.txHash}#eventlog">
@@ -356,7 +431,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
@@ -364,11 +439,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
-              <!--
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fees 1Y/Liquity
+                Fees 7D
               </th>
-              -->
+              {/if}
             </tr>
           </thead>
           <tbody>
@@ -381,24 +456,24 @@
                 {pair.name}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.liquidity}
+                {USDollar.format(pair.liquidity)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.volume_24h}
+                {USDollar.format(pair.volume24h)}
               </td>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              {#if pairsData7d}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.volume_7d}
+                {USDollar.format(pairsData7d[pair.name].volume7d)}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pair.fees_24h}
+                {USDollar.format(pair.fee24h)}
               </td>
-              <!--
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                {pair["1y_fees_liquidity"]}
+              {#if pairsData7d}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {USDollar.format(pairsData7d[pair.name].fee7d)}
               </td>
-              -->
+              {/if}
             </tr>
             {/each}
           </tbody>
@@ -421,19 +496,17 @@
           <div class="ml-4">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Top Tokens</h3>
             <p class="text-sm text-gray-500">
-              {#if tokenData.block_height}Synced to <a href="{$explorerPrefix}/block/{tokenData.block_height}"class="text-indigo-800" target="_blank">{tokenData.block_height}</a> <Time relative timestamp={tokenData.block_timestamp} />{#if (tokenData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
+              {#if epochInfo}Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={tokenData.block_timestamp} />{#if (tokenData.block_timestamp_ms+600000) < (+new Date())} ⏳{/if}
               {/if}
             </p>
           </div>
         </div>
       </div>
       <div class="ml-4 mt-4 flex-shrink-0 flex">
-        <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{tokenData.cid}">
+        <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_tokens_cid}">
           <!-- Heroicon name: solid/phone -->
-          <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-          </svg>
-          <span> IPFS </span>
+          <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+          <span> Data </span>
         </a>
         {#if tokenData.txHash}
         <a class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="{$anchorExplorerPrefix}/tx/{tokenData.txHash}#eventlog">
@@ -492,11 +565,11 @@
                 {token.symbol}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.price}
+                {USDollar.format(token.price)}
               </td>
               {#if showChangeData}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {#if (token.price_change_24h[0] == "+" || !isNaN(token.price_change_24h[0])) && token.price_change_24h != "0.0%"}
+                {#if (token.priceChange24h >= 0 )}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <!-- Heroicon name: solid/arrow-sm-up -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -505,9 +578,9 @@
                   <span class="sr-only">
                     Increased by
                   </span>
-                  {token.price_change_24h}
+                  {`${(token.priceChange24h).toFixed(2)}%`}
                 </p>
-                {:else if token.price_change_24h[0] == "-" && token.price_change_24h != "-0.0%"}
+                {:else if token.priceChange24h && token.priceChange24h != 0}
                 <p class="ml-2 flex items-baseline text-sm font-semibold text-red-600">
                   <!-- Heroicon name: solid/arrow-sm-down -->
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -516,20 +589,16 @@
                   <span class="sr-only">
                     Decreased by
                   </span>
-                  {token.price_change_24h}
-                </p>
-                {:else}
-                <p class="ml-2 flex items-baseline text-sm font-semibold text-grey-600">
-                  ~{isNaN(token.price_change_24h[0]) ? token.price_change_24h.substr(1): token.price_change_24h}
+                  {`${(token.priceChange24h).toFixed(2)}%`}
                 </p>
                 {/if}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.volume_24h}
+                {USDollar.format(token.volume24h)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {token.liquidity}
+                {USDollar.format(token.liquidity)}
               </td>
             </tr>
             {/each}
