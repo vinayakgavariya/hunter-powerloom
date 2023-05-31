@@ -17,7 +17,6 @@
   let name = '';
   let top_tokens_cid = '';
   let top_tokens_project_id = import.meta.env.VITE_24H_TOP_TOKENS_PROJECT_ID || 'aggregate_uniswap_24h_top_tokens:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
-  let currentEpoch = null;
   let epochInfo = null;
   let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -29,20 +28,8 @@
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+`/current_epoch`);
-      console.log('got epoch', response.data);
-      if (response.data) {
-        currentEpoch = response.data;
-      } else {
-        throw new Error(JSON.stringify(response.data));
-      }
-    }
-    catch (e){
-      console.error('currentEpoch', e);
-    }
-    try {
-      response = await axios.get(API_PREFIX+`/epoch/${currentEpoch.epochId-1}`);
-      console.log('got epoch info', response.data);
+      response = await axios.get(API_PREFIX+`/last_finalized_epoch/${top_tokens_project_id}`);
+      console.log('got last finalized epoch', response.data);
       if (response.data) {
         epochInfo = response.data;
       } else {
@@ -50,10 +37,10 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('LastFinalizedEpoch', e);
     }
     try {
-      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
+      response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_tokens_project_id}/`);
       console.log('got top tokens cid', response.data);
       if (response.data) {
         top_tokens_cid = response.data;
@@ -65,7 +52,7 @@
       console.error('top tokens cid', e);
     }
     try {
-      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_tokens_project_id}/`);
+      response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_tokens_project_id}/`);
       console.log('got tokens', response.data);
       tokenData = {
         block_height: epochInfo.blocknumber,

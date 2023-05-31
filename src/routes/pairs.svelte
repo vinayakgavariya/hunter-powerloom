@@ -20,7 +20,6 @@
   let name = '';
   let top_pairs_project_id = import.meta.env.VITE_24H_TOP_PAIRS_PROJECT_ID || 'aggregate_uniswap_24h_top_pairs:b72767bbbd95e505ab72501b22784258fdff3dc0fc1ecee4d1fafe854d3dbdfb:UNISWAPV2-ph15-prod';
   let top_pairs_7d_project_id = import.meta.env.VITE_7D_TOP_PAIRS_PROJECT_ID || 'aggregate_uniswap_7d_top_pairs:e9ef15493ebc1be7640743c0b6a96fc2c33a7cbd5263eed9418c818b63a05254:UNISWAPV2-ph15-prod';
-  let currentEpoch = null;
   let epochInfo = null;
   let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -31,20 +30,8 @@
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+`/current_epoch`);
-      console.log('got epoch', response.data);
-      if (response.data) {
-        currentEpoch = response.data;
-      } else {
-        throw new Error(JSON.stringify(response.data));
-      }
-    }
-    catch (e){
-      console.error('currentEpoch', e);
-    }
-    try {
-      response = await axios.get(API_PREFIX+`/epoch/${currentEpoch.epochId-1}`);
-      console.log('got epoch info', response.data);
+      response = await axios.get(API_PREFIX+`/last_finalized_epoch/${top_pairs_project_id}`);
+      console.log('got last finalized epoch', response.data);
       if (response.data) {
         epochInfo = response.data;
       } else {
@@ -52,10 +39,10 @@
       }
     }
     catch (e){
-      console.error('EpochInfo', e);
+      console.error('LastFinalizedEpoch', e);
     }
     try {
-      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
       console.log('got stats', response.data);
       if (response.data) {
         for (let pair of response.data.pairs) {
@@ -69,7 +56,7 @@
       console.error('stats', e);
     }
     try {
-      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
+      response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_pairs_project_id}/`);
       console.log('got top pairs cid', response.data);
       if (response.data) {
         top_pairs_cid = response.data;
@@ -81,7 +68,7 @@
       console.error('top pairs cid', e);
     }
     try {
-      response = await axios.get(API_PREFIX+`/cid/${currentEpoch.epochId-1}/${top_pairs_7d_project_id}/`);
+      response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
       console.log('got top pairs cid', response.data);
       if (response.data) {
         top_pairs_7d_cid = response.data;
@@ -93,7 +80,7 @@
       console.error('top pairs cid', e);
     }
     try {
-      response = await axios.get(API_PREFIX+`/data/${currentEpoch.epochId-1}/${top_pairs_project_id}/`);
+      response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_project_id}/`);
       console.log('got pairs', response.data);
       pairsData = {
         block_height: epochInfo.blocknumber,
