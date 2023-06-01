@@ -39,11 +39,11 @@
       }
     }
     catch (e){
-      console.error('LastFinalizedEpoch', e);
+      console.error('last finalized epoch', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
-      console.log('got stats', response.data);
+      console.log('got 7d top pairs', response.data);
       if (response.data) {
         for (let pair of response.data.pairs) {
           pairsData7d[pair.name] = pair;
@@ -53,7 +53,7 @@
       }
     }
     catch (e){
-      console.error('stats', e);
+      console.error('7d top pairs', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_pairs_project_id}/`);
@@ -69,7 +69,7 @@
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
-      console.log('got top pairs cid', response.data);
+      console.log('got 7d top pairs cid', response.data);
       if (response.data) {
         top_pairs_7d_cid = response.data;
       } else {
@@ -77,7 +77,7 @@
       }
     }
     catch (e){
-      console.error('top pairs cid', e);
+      console.error('7d top pairs cid', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_project_id}/`);

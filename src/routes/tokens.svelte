@@ -37,7 +37,7 @@
       }
     }
     catch (e){
-      console.error('LastFinalizedEpoch', e);
+      console.error('last finalized epoch', e);
     }
     try {
       response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_tokens_project_id}/`);
