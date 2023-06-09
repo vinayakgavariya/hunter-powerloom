@@ -9,41 +9,90 @@
   import { anchorExplorerPrefix, explorerPrefix } from '../stores.js';
 
   let pairsData = {data:[], fullData:[]};
+  let pairsData7d = {};
+  let top_pairs_cid = '';
+  let top_pairs_7d_cid = '';
   const API_PREFIX = import.meta.env.VITE_API_PREFIX;
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
   const V3 = import.meta.env.VITE_UNISWAPV3 == 'true';
 	const APP_NAME = import.meta.env.VITE_APP_NAME || 'Uniswap ' + (V3 ? 'v3' : 'v2');
   let showChangeData = true;
   let name = '';
-
+  let top_pairs_project_id = import.meta.env.VITE_24H_TOP_PAIRS_PROJECT_ID;
+  let top_pairs_7d_project_id = import.meta.env.VITE_7D_TOP_PAIRS_PROJECT_ID;
+  let epochInfo = null;
+  let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
   onMount(async () => {
     name = location.search.substr(8);
     console.log('search', name);
     let response;
     try {
-      response = await axios.get(API_PREFIX+'/v1/api/'+(V3 ? 'v3' : 'v2')+'-pairs');
+      response = await axios.get(API_PREFIX+`/last_finalized_epoch/${top_pairs_project_id}`);
+      console.log('got last finalized epoch', response.data);
+      if (response.data) {
+        epochInfo = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('last finalized epoch', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
+      console.log('got 7d top pairs', response.data);
+      if (response.data) {
+        for (let pair of response.data.pairs) {
+          pairsData7d[pair.name] = pair;
+        }
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('7d top pairs', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_pairs_project_id}/`);
+      console.log('got top pairs cid', response.data);
+      if (response.data) {
+        top_pairs_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('top pairs cid', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/cid/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
+      console.log('got 7d top pairs cid', response.data);
+      if (response.data) {
+        top_pairs_7d_cid = response.data;
+      } else {
+        throw new Error(JSON.stringify(response.data));
+      }
+    }
+    catch (e){
+      console.error('7d top pairs cid', e);
+    }
+    try {
+      response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_project_id}/`);
       console.log('got pairs', response.data);
       pairsData = {
-        block_height: response.data.block_height,
-        block_timestamp: new Date(response.data.block_timestamp*1000),
-        data: response.data.data,
-        fullData: response.data.data,
+        block_height: epochInfo.blocknumber,
+        block_timestamp_ms: epochInfo.timestamp*1000,
+        block_timestamp: new Date(epochInfo.timestamp*1000),
+        data: response.data.pairs,
+        fullData: response.data.pairs,
         txHash: response.data.txHash,
-        begin_block_timestamp_7d: response.data.begin_block_timestamp_7d,
+        begin_block_timestamp_7d: 0,
         cid: response.data.cid
       };
-      console.log(new Date(response.data.begin_block_timestamp_7d*1000));
-      if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-172800000)) {
-        //*
-        if (pairsData.begin_block_timestamp_7d*1000 > (+new Date()-86400000)) {
-          recentReset = true;
-          console.warn('data was recently reset!');
-        } else {
-          console.warn('data is less than 2 days old, hiding percentage changes..');
-        }
-        //*/
-        showChangeData = false;
-      }
+      
       searchPairs();
       localStorage.removeItem('pooler_cf_force');
     }
@@ -106,7 +155,7 @@
         <div class="ml-4">
           <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
           <p class="text-sm text-gray-500">
-            {#if pairsData.block_height}Synced to <a href="{$explorerPrefix}/block/{pairsData.block_height}"class="text-indigo-800" target="_blank">{pairsData.block_height}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
+            {#if epochInfo}Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
           </p>
         </div>
       </div>
@@ -122,12 +171,15 @@
       </form>
     </div>
     <div class="ml-4 mt-4 flex-shrink-0 flex">
-      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{pairsData.cid}">
+      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_cid}">
         <!-- Heroicon name: solid/phone -->
-        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-        </svg>
-        <span> IPFS </span>
+        <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+        <span> Data </span>
+      </a>
+      <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_7d_cid}">
+        <!-- Heroicon name: solid/phone -->
+        <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
+        <span> 7d Data </span>
       </a>
       {#if pairsData.txHash}
       <a class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="{$anchorExplorerPrefix}/tx/{pairsData.txHash}#eventlog">
@@ -159,7 +211,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
@@ -167,11 +219,11 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
-              <!--
+              {#if pairsData7d}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fees 1Y/Liquity
+                Fees 7D
               </th>
-              -->
+              {/if}
             </tr>
           </thead>
           <tbody>
@@ -184,24 +236,24 @@
                 {pool.name}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.liquidity}
+                {USDollar.format(pool.liquidity)}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.volume_24h}
+                {USDollar.format(pool.volume24h)}
               </td>
-              {#if pairsData.begin_block_timestamp_7d*1000 < (+new Date()-604800000)}
+              {#if pairsData7d}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.volume_7d}
+                {USDollar.format(pairsData7d[pool.name].volume7d)}
               </td>
               {/if}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {pool.fees_24h}
+                {USDollar.format(pool.fee24h)}
               </td>
-              <!--
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500">
-                {pool["1y_fees_liquidity"]}
+              {#if pairsData7d}
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {USDollar.format(pairsData7d[pool.name].fee7d)}
               </td>
-              -->
+              {/if}
             </tr>
             {/each}
           </tbody>
