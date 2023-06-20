@@ -33,6 +33,7 @@
   let epochInfo = null;
   let pairsData = {data:[]};
   let pairsData7d = {};
+  let pairsData7dSet = false;
   let tokenData = {data:[]};
   const API_PREFIX = import.meta.env.VITE_API_PREFIX || 'static'; //change this to AXIOS config later 
   let recentReset = import.meta.env.VITE_RECENT_RESET == 'true';
@@ -85,8 +86,13 @@
       response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
       console.log('got 7d top pairs', response.data);
       if (response.data) {
-        for (let pair of response.data.pairs) {
-          pairsData7d[pair.name] = pair;
+        if (response.data.complete){
+          for (let pair of response.data.pairs) {
+            pairsData7d[pair.name] = pair;
+          }
+          pairsData7dSet = true;
+        } else {
+          console.warn('7 day data is not ready!');
         }
       } else {
         throw new Error(JSON.stringify(response.data));
@@ -386,11 +392,13 @@
         <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
         <span> Data </span>
       </a>
+      {#if pairsData7dSet && top_pairs_7d_cid}
       <a class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="https://cloudflare-ipfs.com/ipfs/{top_pairs_7d_cid}">
         <!-- Heroicon name: solid/phone -->
         <svg role="img" class="-ml-1 mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>IPFS icon</title><path d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"/></svg>
         <span> 7d Data </span>
       </a>
+      {/if}
       {#if pairsData.txHash}
       <a class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank" href="{$anchorExplorerPrefix}/tx/{pairsData.txHash}#eventlog">
         <!-- Heroicon name: solid/mail -->
@@ -422,7 +430,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
@@ -430,7 +438,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 7D
               </th>
@@ -452,7 +460,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pair.volume24h)}
               </td>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pairsData7d[pair.name].volume7d)}
               </td>
@@ -460,7 +468,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pair.fee24h)}
               </td>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pairsData7d[pair.name].fee7d)}
               </td>
