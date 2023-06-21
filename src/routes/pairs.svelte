@@ -10,6 +10,7 @@
 
   let pairsData = {data:[], fullData:[]};
   let pairsData7d = {};
+  let pairsData7dSet = false;
   let top_pairs_cid = '';
   let top_pairs_7d_cid = '';
   const API_PREFIX = import.meta.env.VITE_API_PREFIX;
@@ -45,8 +46,11 @@
       response = await axios.get(API_PREFIX+`/data/${epochInfo.epochId}/${top_pairs_7d_project_id}/`);
       console.log('got 7d top pairs', response.data);
       if (response.data) {
-        for (let pair of response.data.pairs) {
-          pairsData7d[pair.name] = pair;
+        if (response.data.complete){
+          for (let pair of response.data.pairs) {
+            pairsData7d[pair.name] = pair;
+          }
+          pairsData7dSet = true;
         }
       } else {
         throw new Error(JSON.stringify(response.data));
@@ -211,7 +215,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 24H
               </th>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Volume 7D
               </th>
@@ -219,7 +223,7 @@
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 24H
               </th>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fees 7D
               </th>
@@ -241,7 +245,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pool.volume24h)}
               </td>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pairsData7d[pool.name].volume7d)}
               </td>
@@ -249,7 +253,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pool.fee24h)}
               </td>
-              {#if pairsData7d}
+              {#if pairsData7dSet}
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {USDollar.format(pairsData7d[pool.name].fee7d)}
               </td>
