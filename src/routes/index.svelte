@@ -75,6 +75,9 @@
       console.log('got stats', response.data);
       if (response.data) {
         statsData = response.data;
+        if (!response.data.complete){
+          recentReset = true;
+        }
       } else {
         throw new Error(JSON.stringify(response.data));
       }
@@ -130,9 +133,6 @@
       console.log('got top pairs cid', response.data);
       if (response.data) {
         top_pairs_cid = response.data;
-        if (!response.data.complete){
-          recentReset = true;
-        }
       } else {
         throw new Error(JSON.stringify(response.data));
       }
