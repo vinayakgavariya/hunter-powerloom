@@ -71,7 +71,7 @@
             //showInfo.set(true);
           }}>
               <img class="block lg:hidden h-8 w-auto" src="./Powerloom.PFP.Light.png" alt="PowerLoom">
-              <img class="hidden lg:block h-8 w-auto" src="./Powerloom.PFP.Light.png" alt="PowerLoom">
+              <img class="hidden lg:block h-16 w-auto" src="./Powerloom.PFP.Light.png" alt="PowerLoom">
             </button>
           </div>
           <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
