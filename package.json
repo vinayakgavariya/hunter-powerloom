@@ -24,6 +24,7 @@
     "@lukeed/uuid": "^2.0.0",
     "axios": "^0.25.0",
     "cookie": "^0.4.1",
+    "dotenv": "^16.3.1",
     "svelte-tiny-linked-charts": "^1.0.6"
   }
 }
