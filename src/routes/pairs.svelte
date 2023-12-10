@@ -157,13 +157,19 @@
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
         </div>
         <div class="ml-4">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">Top {V3 ? 'Pools' : 'Pairs'}</h3>
-          <p class="text-sm text-gray-500">
-            {#if epochInfo}Synced to <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}"class="text-indigo-800" target="_blank">{epochInfo.epochEnd}</a> <Time relative timestamp={pairsData.block_timestamp} />{/if}
+          <h3 class="text-lg leading-6 font-semibold text-indigo-600">
+            {V3 ? 'Top Pools' : 'Top Pairs'}</h3>
+          <p class="text-sm text-gray-500 mt-1">
+            {#if epochInfo}Synced to
+            <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}" class="text-indigo-600 hover:underline" target="_blank">
+              {epochInfo.epochEnd}
+            </a>
+            <span class="ml-1 text-gray-700">•</span>
+            <span class="ml-1"><Time relative timestamp={pairsData.block_timestamp} /></span>
+            {/if}
           </p>
         </div>
-      </div>
-    </div>
+</div></div>        
     <div class="ml-4 mt-4 flex-shrink-0 flex">
       <form class="space-y-8 divide-y divide-gray-200">
         <div class="mt-1 relative flex items-center">
@@ -201,64 +207,64 @@
     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
       <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+          <thead class="bg-blue-500 text-white">
             <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 #
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Name
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Liquidity
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Volume 24H
               </th>
               {#if pairsData7dSet}
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Volume 7D
-              </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Volume 7D
+                </th>
               {/if}
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Fees 24H
               </th>
               {#if pairsData7dSet}
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fees 7D
-              </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                  Fees 7D
+                </th>
               {/if}
             </tr>
           </thead>
           <tbody>
             {#each pairsData.data as pool, i}
-            <tr class={(i+1)%2 == 0 ? "bg-gray-50" : "bg-white"}>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {i+1}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {pool.name}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {USDollar.format(pool.liquidity)}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {USDollar.format(pool.volume24h)}
-              </td>
-              {#if pairsData7dSet}
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {USDollar.format(pairsData7d[pool.name].volume7d)}
-              </td>
-              {/if}
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {USDollar.format(pool.fee24h)}
-              </td>
-              {#if pairsData7dSet}
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {USDollar.format(pairsData7d[pool.name].fee7d)}
-              </td>
-              {/if}
-            </tr>
+              <tr class={(i + 1) % 2 == 0 ? "bg-blue-100" : "bg-white"}>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {i + 1}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {pool.name}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {USDollar.format(pool.liquidity)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {USDollar.format(pool.volume24h)}
+                </td>
+                {#if pairsData7dSet}
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {USDollar.format(pairsData7d[pool.name].volume7d)}
+                  </td>
+                {/if}
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {USDollar.format(pool.fee24h)}
+                </td>
+                {#if pairsData7dSet}
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {USDollar.format(pairsData7d[pool.name].fee7d)}
+                  </td>
+                {/if}
+              </tr>
             {/each}
           </tbody>
         </table>
@@ -266,4 +272,5 @@
     </div>
   </div>
 </div>
+
 </div>

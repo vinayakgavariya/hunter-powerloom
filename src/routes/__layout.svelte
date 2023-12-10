@@ -76,9 +76,11 @@
           </div>
           <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
-            <a href="/" class="{slug == '' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium" aria-current="page">
+            <a href="/" class="{slug == '' ? 'border-b-2 border-indigo-600 text-indigo-700 hover:text-indigo-800' : 'border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-2 py-1 text-sm font-medium" aria-current="page">
               Dashboard
             </a>
+            
+            
 
             <a href="/pairs" class="{slug == 'pairs' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
               {V3 ? 'Pools': 'Pairs'}
@@ -86,6 +88,10 @@
 
             <a href="/tokens" class="{slug == 'tokens' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
               Tokens
+            </a>
+
+            <a href="/tables" class="{slug == '' ? 'border-b-2 border-indigo-600 text-indigo-700 hover:text-indigo-800' : 'border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-2 py-1 text-sm font-medium" aria-current="page">
+              Tables
             </a>
             <!--
             <a href="/about" class="{slug == 'about' ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">

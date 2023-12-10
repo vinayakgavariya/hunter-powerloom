@@ -246,89 +246,78 @@
 {/if}
 
 {#if statsData}
-  <div class="rounded-md bg-blue-50 p-4">
-    <div class="flex">
-      <div class="flex-shrink-0">
-        <!-- Heroicon name: solid/information-circle -->
-        <svg
-          class="h-5 w-5 text-blue-400"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </div>
-      <div class="ml-3 flex-1 md:flex md:justify-between">
-        <p class="text-sm text-blue-700">
-          We currently show stats for a specific list of {V3
-            ? "pools"
-            : "pairs"} with high liquidity. Dynamic support for other {V3
-            ? "pools"
-            : "pairs"} will be added soon!
-        </p>
-        <p class="mt-3 text-sm md:mt-0 md:ml-6">
-          <a
-            href="/pairs"
-            class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
-            >Current {V3 ? "Pools" : "Pairs"}
-            <span aria-hidden="true">&rarr;</span></a
-          >
-        </p>
-      </div>
+  <div class="rounded-md bg-gradient-to-r from-blue-200 to-blue-100 p-4">
+  <div class="flex items-center">
+    <div class="flex-shrink-0">
+      <!-- Heroicon name: solid/information-circle -->
+      <svg
+        class="h-6 w-6 text-blue-500"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
+    <div class="ml-4">
+      <p class="text-sm text-gray-800">
+        Explore detailed statistics for a curated selection of {V3 ? "pools" : "pairs"} known for high liquidity. More {V3 ? "pools" : "pairs"} will be dynamically supported soon!
+      </p>
+      <p class="mt-2 text-sm">
+        <a href="/pairs" class="whitespace-nowrap font-medium text-blue-600 hover:text-blue-700">
+          View Current {V3 ? "Pools" : "Pairs"}
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </p>
     </div>
   </div>
-  <div class="flex pull-right">
-    <a
-      class="relative inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      target="_blank"
-      href="https://cloudflare-ipfs.com/ipfs/{stats_cid}"
-    >
-      <!-- Heroicon name: solid/phone -->
+</div>
 
-      <svg
-        role="img"
-        class="-ml-1 mr-2 h-5 w-5 text-gray-400"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        ><title>IPFS icon</title><path
-          d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"
-        /></svg
-      >
-      <span> Data </span>
-    </a>
-  </div>
+<div class="flex items-center justify-end">
+  <a
+    class="inline-flex items-center px-4 py-2 border border-indigo-500 shadow-sm text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300"
+    target="_blank"
+    href="https://cloudflare-ipfs.com/ipfs/{stats_cid}"
+  >
+    <svg
+      role="img"
+      class="-ml-1 mr-2 h-5 w-5 text-white"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+    >
+      <title>IPFS icon</title>
+      <path
+        fill="currentColor"
+        d="M12 0L1.608 6v12L12 24l10.392-6V6zm-1.073 1.445h.001a1.8 1.8 0 002.138 0l7.534 4.35a1.794 1.794 0 000 .403l-7.535 4.35a1.8 1.8 0 00-2.137 0l-7.536-4.35a1.795 1.795 0 000-.402zM21.324 7.4c.109.08.226.147.349.201v8.7a1.8 1.8 0 00-1.069 1.852l-7.535 4.35a1.8 1.8 0 00-.349-.2l-.009-8.653a1.8 1.8 0 001.07-1.851zm-18.648.048l7.535 4.35a1.8 1.8 0 001.069 1.852v8.7c-.124.054-.24.122-.349.202l-7.535-4.35a1.8 1.8 0 00-1.069-1.852v-8.7c.124-.054.24-.122.35-.202z"
+      />
+    </svg>
+    <span class="text-white">Explore Data</span>
+  </a>
+</div>
+
+
+
   <div>
     <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <div
         class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden"
       >
-        <dt>
-          <div class="absolute bg-indigo-500 rounded-md p-3">
+      <dt class="flex items-center">
+        <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 rounded-full p-3">
             <!-- Heroicon name: outline/users -->
-            <svg
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              ></path></svg
-            >
-          </div>
-          <p class="ml-16 text-sm font-medium text-gray-500 truncate">
-            Volume 24H
-          </p>
-        </dt>
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+        </div>
+        <p class="ml-4 text-lg font-semibold text-indigo-700">Volume 24H</p>
+        <p class="ml-16 text-sm font-medium text-gray-500 truncate"></p>
+    </dt>
+    
         <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
           <p class="text-xl font-semibold text-gray-900">
             {USDollar.format(statsData.volume24h)}
@@ -384,25 +373,19 @@
       <div
         class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden"
       >
-        <dt>
-          <div class="absolute bg-indigo-500 rounded-md p-3">
+      <dt class="flex items-center">
+        <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-full p-3">
             <!-- Heroicon name: outline/cursor-click -->
-            <svg
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              ></path></svg
-            >
-          </div>
-          <p class="ml-16 text-sm font-medium text-gray-500 truncate">TVL</p>
-        </dt>
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+        </div>
+        <p class="ml-4 text-xl font-semibold text-indigo-800">Total Value Locked (TVL)</p>
+    </dt>
+    
+    
+    
+    
         <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
           <p class="text-xl font-semibold text-gray-900">
             {USDollar.format(statsData.tvl)}
@@ -458,27 +441,16 @@
       <div
         class="relative bg-white pt-5 px-4 pb-3 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden"
       >
-        <dt>
-          <div class="absolute bg-indigo-500 rounded-md p-3">
+      <dt class="flex items-center">
+        <div class="bg-gradient-to-r from-indigo-500 via-indigo-600 to-indigo-700 rounded-full p-3">
             <!-- Heroicon name: outline/mail-open -->
-            <svg
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-              ><path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-              ></path></svg
-            >
-          </div>
-          <p class="ml-16 text-sm font-medium text-gray-500 truncate">
-            Fees 24H
-          </p>
-        </dt>
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+        </div>
+        <p class="ml-4 text-lg font-semibold text-indigo-700">Fees 24H</p>
+    </dt>
+    
         <dd class="ml-16 pb-6 flex items-baseline sm:pb-3">
           <p class="text-xl font-semibold text-gray-900">
             {USDollar.format(statsData.fee24h)}
@@ -555,23 +527,23 @@
             >
           </div>
           <div class="ml-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
+            <h3 class="text-lg leading-6 font-semibold text-indigo-600">
               Top {V3 ? "Pools" : "Pairs"}
             </h3>
-            <p class="text-sm text-gray-500">
-              {#if epochInfo}Synced to <a
-                  href="{$explorerPrefix}/block/{epochInfo.epochEnd}"
-                  class="text-indigo-800"
-                  target="_blank">{epochInfo.epochEnd}</a
-                >
-                <Time
-                  relative
-                  timestamp={pairsData.block_timestamp}
-                />{#if pairsData.block_timestamp_ms + 600000 < +new Date()}
-                  ⏳{/if}
+            <p class="mt-1 text-sm text-gray-600">
+              {#if epochInfo}
+                Synced to 
+                <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}" class="text-indigo-800" target="_blank">
+                  {epochInfo.epochEnd}
+                </a>
+                <Time relative timestamp={pairsData.block_timestamp} />
+                {#if pairsData.block_timestamp_ms + 600000 < +new Date()}
+                  <span class="text-orange-500">⏳</span>
+                {/if}
               {/if}
             </p>
           </div>
+          
         </div>
       </div>
       <div class="ml-4 mt-4 flex-shrink-0 flex">
@@ -642,54 +614,52 @@
 <div class="flex flex-col">
   <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-      <div
-        class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
-      >
+      <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+          <thead class="bg-indigo-500 text-white">
             <tr>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 #
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Name
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Liquidity
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Volume 24H
               </th>
               {#if pairsData7dSet}
                 <th
                   scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
                 >
                   Volume 7D
                 </th>
               {/if}
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Fees 24H
               </th>
               {#if pairsData7dSet}
                 <th
                   scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
                 >
                   Fees 7D
                 </th>
@@ -730,10 +700,10 @@
             {/each}
           </tbody>
         </table>
-        <div class="">
+        <div class="mt-4">
           <a
             href="/pairs"
-            class="w-full flex justify-center items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            class="w-full flex justify-center items-center px-4 py-2 text-sm font-medium text-indigo-500 bg-white hover:bg-indigo-50 border border-indigo-500 rounded-md transition-all duration-300"
           >
             View all
           </a>
@@ -742,6 +712,7 @@
     </div>
   </div>
 </div>
+
 <div class="pt-4">
   <div
     class="bg-white px-4 py-5 shadow overflow-hidden border-b border-gray-200 sm:rounded-lg sm:px-6"
@@ -763,23 +734,23 @@
             >
           </div>
           <div class="ml-4">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">
+            <h3 class="text-lg leading-6 font-semibold text-indigo-600">
               Top Tokens
             </h3>
-            <p class="text-sm text-gray-500">
-              {#if epochInfo}Synced to <a
-                  href="{$explorerPrefix}/block/{epochInfo.epochEnd}"
-                  class="text-indigo-800"
-                  target="_blank">{epochInfo.epochEnd}</a
-                >
-                <Time
-                  relative
-                  timestamp={tokenData.block_timestamp}
-                />{#if tokenData.block_timestamp_ms + 600000 < +new Date()}
-                  ⏳{/if}
+            <p class="mt-1 text-sm text-gray-600">
+              {#if epochInfo}
+                Synced to 
+                <a href="{$explorerPrefix}/block/{epochInfo.epochEnd}" class="text-indigo-800" target="_blank">
+                  {epochInfo.epochEnd}
+                </a>
+                <Time relative timestamp={tokenData.block_timestamp} />
+                {#if tokenData.block_timestamp_ms + 600000 < +new Date()}
+                  <span class="text-orange-500">⏳</span>
+                {/if}
               {/if}
             </p>
           </div>
+          
         </div>
       </div>
       <div class="ml-4 mt-4 flex-shrink-0 flex">
@@ -831,55 +802,53 @@
 <div class="flex flex-col">
   <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-      <div
-        class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
-      >
+      <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+          <thead class="bg-indigo-500 text-white">
             <tr>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 #
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Name
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Symbol
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Price
               </th>
               {#if showChangeData}
                 <th
                   scope="col"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
                 >
                   Price Change
                 </th>
               {/if}
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
                 Volume 24H
               </th>
               <th
                 scope="col"
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
               >
-                okatttttttttttttttttt
+                Liquidity
               </th>
             </tr>
           </thead>
@@ -957,18 +926,20 @@
             {/each}
           </tbody>
         </table>
-        <div class="">
+        <div class="mt-4">
           <a
             href="/tokens"
-            class="w-full flex justify-center items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            class="w-full flex justify-center items-center px-4 py-2 text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50 border border-indigo-600 rounded-md transition-all duration-300"
           >
             View all
           </a>
-          
         </div>
       </div>
     </div>
-   
   </div>
-  
 </div>
+
+   
+
+  <!-- <BarChart/> -->
+
